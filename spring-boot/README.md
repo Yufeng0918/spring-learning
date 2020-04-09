@@ -291,64 +291,24 @@ public class Person {
     private List<Object> lists;
     private Dog dog;
 ```
-
-
-
-#### 4、@PropertySource&@ImportResource&@Bean
-
-@**PropertySource**：加载指定的配置文件；
-
-```java
-/**
- * 将配置文件中配置的每一个属性的值，映射到这个组件中
- * @ConfigurationProperties：告诉SpringBoot将本类中的所有属性和配置文件中相关的配置进行绑定；
- *      prefix = "person"：配置文件中哪个下面的所有属性进行一一映射
- *
- * 只有这个组件是容器中的组件，才能容器提供的@ConfigurationProperties功能；
- *  @ConfigurationProperties(prefix = "person")默认从全局配置文件中获取值；
- *
- */
+#### @PropertySource&@ImportResource&@Bean
+- @PropertySource：加载指定的配置文件
+- @ConfigurationProperties(prefix = "person")默认从全局配置文件中获取值；
+```
 @PropertySource(value = {"classpath:person.properties"})
 @Component
 @ConfigurationProperties(prefix = "person")
-//@Validated
 public class Person {
 
-    /**
-     * <bean class="Person">
-     *      <property name="lastName" value="字面量/${key}从环境变量、配置文件中获取值/#{SpEL}"></property>
-     * <bean/>
-     */
-
-   //lastName必须是邮箱格式
-   // @Email
-    //@Value("${person.last-name}")
     private String lastName;
-    //@Value("#{11*2}")
     private Integer age;
-    //@Value("true")
     private Boolean boss;
 
 ```
-
-
-
-@**ImportResource**：导入Spring的配置文件，让配置文件里面的内容生效；
-
-Spring Boot里面没有Spring的配置文件，我们自己编写的配置文件，也不能自动识别；
-
-想让Spring的配置文件生效，加载进来；@**ImportResource**标注在一个配置类上
-
-```java
-@ImportResource(locations = {"classpath:beans.xml"})
-导入Spring的配置文件让其生效
+- @ImportResource：导入Spring的配置文件，让配置文件里面的内容生效；
+    + Spring Boot里面没有Spring的配置文件，我们自己编写的配置文件，也不能自动识别；
+    + 想让Spring的配置文件生效，加载进来；@ImportResource标注在一个配置类上
 ```
-
-
-
-不来编写Spring的配置文件
-
-```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -357,47 +317,31 @@ Spring Boot里面没有Spring的配置文件，我们自己编写的配置文件
 
     <bean id="helloService" class="com.bp.springboot.service.HelloService"></bean>
 </beans>
+@ImportResource(locations = {"classpath:beans.xml"})
 ```
-
-SpringBoot推荐给容器中添加组件的方式；推荐使用全注解的方式
-
-1、配置类**@Configuration**------>Spring配置文件
-
-2、使用**@Bean**给容器中添加组件
-
-```java
-/**
- * @Configuration：指明当前类是一个配置类；就是来替代之前的Spring配置文件
- *
- * 在配置文件中用<bean><bean/>标签添加组件
- *
- */
+- SpringBoot推荐给容器中添加组件的方式
+    + 配置类@Configuration 等于 Spring配置文件
+    + 使用@Bean给容器中添加组件
+```
 @Configuration
 public class MyAppConfig {
 
-    //将方法的返回值添加到容器中；容器中这个组件默认的id就是方法名
     @Bean
     public HelloService helloService02(){
-        System.out.println("配置类@Bean给容器中添加组件了...");
         return new HelloService();
     }
 }
 ```
 
-##4、配置文件占位符
 
-### 1、随机数
-
+## 7. 配置文件占位符
+#### 随机数
 ```java
-${random.value}、${random.int}、${random.long}
-${random.int(10)}、${random.int[1024,65536]}
+${random.value}, ${random.int}, ${random.long}
+${random.int(10)}, ${random.int[1024,65536]}
 
 ```
-
-
-
-### 2、占位符获取之前配置的值，如果没有可以是用:指定默认值
-
+#### 占位符获取之前配置的值，如果没有可以是用:指定默认值
 ```properties
 person.last-name=张三${random.uuid}
 person.age=${random.int}
@@ -406,6 +350,7 @@ person.boss=false
 person.maps.k1=v1
 person.maps.k2=14
 person.lists=a,b,c
+# default value for person.hello
 person.dog.name=${person.hello:hello}_dog
 person.dog.age=15
 ```

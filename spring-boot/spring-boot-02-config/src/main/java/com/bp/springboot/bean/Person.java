@@ -3,6 +3,7 @@ package com.bp.springboot.bean;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -19,10 +20,9 @@ import java.util.Map;
  *  @ConfigurationProperties(prefix = "person")默认从全局配置文件中获取值；
  *
  */
-//@PropertySource(value = {"classpath:person.properties"})
+@PropertySource(value = {"classpath:person.properties"})
 @Component
 @ConfigurationProperties(prefix = "person")
-//@Validated
 public class Person {
 
     /**

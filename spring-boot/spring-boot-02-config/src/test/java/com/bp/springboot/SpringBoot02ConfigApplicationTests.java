@@ -27,8 +27,9 @@ public class SpringBoot02ConfigApplicationTests {
 
 	@Test
 	public void testHelloService(){
-		boolean b = ioc.containsBean("helloService02");
-		System.out.println(b);
+//		boolean b = ioc.containsBean("helloService");
+		System.out.println("bean in beans.xml: " + ioc.containsBean("helloService"));
+		System.out.println("bean in @Configuration's @Bean: " + ioc.containsBean("helloService02"));
 	}
 
 
