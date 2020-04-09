@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+
+    <!-- target -->
+    <bean id="personTarget" class="com.bp.spring.aop.s01.proxyfactorybean.PersonImpl">
+        <property name="name">
+            <value>Jack</value>
+        </property>
+        <property name="address">
+            <value>Beijing</value>
+        </property>
+    </bean>
+    <!-- proxyfactorybean -->
+    <bean id="beforeAdvice" class="com.bp.spring.aop.s01.proxyfactorybean.MyMethodBeforeAdvice"/>
+    <bean id="afterAdvice" class="com.bp.spring.aop.s01.proxyfactorybean.MyAfterReturningAdvice"/>
+    <bean id="aroundAdvice" class="com.bp.spring.aop.s01.proxyfactorybean.MyAroundAdvice"/>
+    <!-- proxy -->
+    <bean id="person" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="proxyInterfaces">
+            <value>com.bp.spring.aop.s01.proxyfactorybean.Person</value>
+        </property>
+        <property name="target">
+            <ref bean="personTarget"/>
+        </property>
+        <property name="interceptorNames">
+            <list>
+                <value>aroundAdvice</value>
+                <value>beforeAdvice</value>
+                <value>afterAdvice</value>
+            </list>
+        </property>
+    </bean>
+
+
+    <!-- target -->
+    <bean id="dogTarget" class="com.bp.spring.aop.s01.proxyfactorybean.Dog"/>
+    <!-- proxyfactorybean -->
+    <bean id="transactionManager" class="com.bp.spring.aop.s01.proxyfactorybean.TransactionManager"/>
+    <!-- proxy -->
+    <bean id="dog" class="org.springframework.aop.framework.ProxyFactoryBean">
+        <property name="interceptorNames">
+            <list>
+                <value>transactionManager</value>
+            </list>
+        </property>
+        <property name="target" ref="dogTarget"></property>
+    </bean>
+</beans>
