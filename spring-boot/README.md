@@ -131,7 +131,7 @@ public @interface SpringBootApplication{}
 ​	+ Spring的底层注解@Import，给容器中导入一个组件；导入的组件由AutoConfigurationPackages.Registrar.class；
     + 将主配置类（@SpringBootApplication标注的类）的所在包及下面所有子包里面的所有组件扫描到Spring容器
 - @Import(EnableAutoConfigurationImportSelector.class): Spring代码组件配置
-    + EnableAutoConfigurationImportSelector**：将所有需要导入的组件以全类名的方式返回；这些组件就会被添加到容器中；
+    + EnableAutoConfigurationImportSelector：将所有需要导入的组件以全类名的方式返回；这些组件就会被添加到容器中；
     + 会给容器中导入非常多的自动配置类 AutoConfiguration；就是给容器中导入这个场景需要的所有组件，并配置好这些组件；![自动配置类](images/搜狗截图20180129224104.png)
     + SpringFactoriesLoader.loadFactoryNames(EnableAutoConfiguration.class,classLoader)；
         + Spring Boot在启动的时候从类路径下的META-INF/spring.factories中获取EnableAutoConfiguration指定的值
@@ -151,9 +151,9 @@ public @interface EnableAutoConfiguration {}
 + 默认生成的Spring Boot项目；
 - 主程序已经生成好了，我们只需要我们自己的逻辑
 - resources文件夹中目录结构
-  - static：保存所有的静态资源； js css  images；
-  - templates：保存所有的模板页面；（Spring Boot默认jar包使用嵌入式的Tomcat，默认不支持JSP页面）；可以使用模板引擎（freemarker、thymeleaf）；
-  - application.properties：Spring Boot应用的配置文件；可以修改一些默认设置；
+    + static：保存所有的静态资源； js css  images；
+    + templates：保存所有的模板页面；默认不支持JSP页面；可以使用模板引擎（freemarker、thymeleaf）；
+    + application.properties：Spring Boot应用的配置文件；可以修改一些默认设置；
 #### STS使用 Spring Starter Project快速创建项目
 
 
@@ -162,122 +162,51 @@ public @interface EnableAutoConfiguration {}
 + SpringBoot使用一个全局的配置文件，配置文件名是固定的；
     + application.properties
     + application.yml
-
-
-
-配置文件的作用：修改SpringBoot自动配置的默认值；SpringBoot在底层都给我们自动配置好；
-
-
-
-YAML（YAML Ain't Markup Language）
-
-​	YAML  A Markup Language：是一个标记语言
-
-​	YAML   isn't Markup Language：不是一个标记语言；
-
-标记语言：
-
-​	以前的配置文件；大多都使用的是  **xxxx.xml**文件；
-
-​	YAML：**以数据为中心**，比json、xml等更适合做配置文件；
-
-​	YAML：配置例子
-
-```yaml
-server:
-  port: 8081
+    + 修改SpringBoot自动配置的默认值；SpringBoot在底层都给我们自动配置好；
++ YAML（YAML Ain't Markup Language）
+​	+ YAML A Markup Language：是一个标记语言
+​	+ YAML isn't Markup Language：不是一个标记语言；
+​	+ 以数据为中心，比json、xml等更适合做配置文件；
+#### 基本语法
++ k:(空格)v：表示一对键值对（空格必须有）；
++ 以空格的缩进来控制层级关系；只要是左对齐的一列数据，都是同一个层级的
++ 属性和值也是大小写敏感
 ```
-
-​	XML：
-
-```xml
-<server>
-	<port>8081</port>
-</server>
-```
-
-
-
-## 2、YAML语法：
-
-### 1、基本语法
-
-k:(空格)v：表示一对键值对（空格必须有）；
-
-以**空格**的缩进来控制层级关系；只要是左对齐的一列数据，都是同一个层级的
-
-```yaml
 server:
     port: 8081
     path: /hello
 ```
-
-属性和值也是大小写敏感；
-
-
-
-### 2、值的写法
-
-#### 字面量：普通的值（数字，字符串，布尔）
-
-​	k: v：字面直接来写；
-
-​		字符串默认不用加上单引号或者双引号；
-
-​		""：双引号；不会转义字符串里面的特殊字符；特殊字符会作为本身想表示的意思
-
-​				name:   "zhangsan \n lisi"：输出；zhangsan 换行  lisi
-
-​		''：单引号；会转义特殊字符，特殊字符最终只是一个普通的字符串数据
-
-​				name:   ‘zhangsan \n lisi’：输出；zhangsan \n  lisi
-
-
-
-#### 对象、Map（属性和值）（键值对）：
-
-​	k: v：在下一行来写对象的属性和值的关系；注意缩进
-
-​		对象还是k: v的方式
-
-```yaml
-friends:
-		lastName: zhangsan
-		age: 20
+#### 字面量：普通的值
+- 数字，字符串，布尔
+- 字符串默认不用加上单引号或者双引号
+- 双引号；不会转义字符串里面的特殊字符；特殊字符会作为本身想表示的意思
+    + name:   "v1 \n v2"：输出；v1 换行  v2
+- 单引号；会转义特殊字符，特殊字符最终只是一个普通的字符串数据
+​	+ name:   ‘v1 \n v2’：输出；v1 \n  v2
+#### 对象, Map
 ```
-
-行内写法：
-
-```yaml
+friends:
+    lastName: zhangsan
+    age: 20
 friends: {lastName: zhangsan,age: 18}
 ```
-
-
-
-#### 数组（List、Set）：
-
-用- 值表示数组中的一个元素
-
-```yaml
+#### 数组（List, Set）：
+```
 pets:
  - cat
  - dog
  - pig
-```
 
-行内写法
-
-```yaml
 pets: [cat,dog,pig]
 ```
 
 
 
-## 3、配置文件值注入
-
-配置文件
-
-```yaml
+## 6. 配置文件值注入
+- 配置文件
+    + properties required native-to-ascii conversion
+```
+# ymal 
 person:
     lastName: hello
     age: 18
@@ -290,19 +219,22 @@ person:
     dog:
       name: 小狗
       age: 12
+
+person.last-name=yufeng
+person.age=18
+person.birth=2017/12/15
+person.boss=false
+person.maps.k1=v1
+person.maps.k2=14
+person.lists=a,b,c
+person.dog.name=${person.hello:hello}_dog
+person.dog.age=15
 ```
-
-javaBean：
-
-```java
-/**
- * 将配置文件中配置的每一个属性的值，映射到这个组件中
- * @ConfigurationProperties：告诉SpringBoot将本类中的所有属性和配置文件中相关的配置进行绑定；
- *      prefix = "person"：配置文件中哪个下面的所有属性进行一一映射
- *
- * 只有这个组件是容器中的组件，才能容器提供的@ConfigurationProperties功能；
- *
- */
+- javaBean
+    + 将配置文件中配置的每一个属性的值，映射到这个组件中
+    + @ConfigurationProperties：告诉SpringBoot将本类中的所有属性和配置文件中相关的配置进行绑定；
+    + prefix = "person"：配置文件中哪个下面的所有属性进行一一映射
+```
 @Component
 @ConfigurationProperties(prefix = "person")
 public class Person {
@@ -317,67 +249,43 @@ public class Person {
     private Dog dog;
 
 ```
-
-
-
-我们可以导入配置文件处理器，以后编写配置就有提示了
-
-```xml
-<!--导入配置文件处理器，配置文件进行绑定就会有提示-->
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-configuration-processor</artifactId>
-			<optional>true</optional>
-		</dependency>
+- 导入配置文件处理器，以后编写配置就有提示了
 ```
-
-#### 1、properties配置文件在idea中默认utf-8可能会乱码
-
-调整
-
-![idea配置乱码](images/搜狗截图20180130161620.png)
-
-#### 2、@Value获取值和@ConfigurationProperties获取值比较
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-configuration-processor</artifactId>
+    <optional>true</optional>
+</dependency>
+```
+#### @Value获取值和@ConfigurationProperties获取值比较
+- @Value 注解
+    + 配置文件: @Value("${person.last-name}")
+    + 动态运算: @Value("#{11*2}")
+    + 值: @Value("true")
+- 只是在某个业务逻辑中需要获取一下配置文件中的某项值，使用@Value；
+- 编写了一个javaBean来和配置文件进行映射，我们就直接使用@ConfigurationProperties；
 
 |            | @ConfigurationProperties | @Value |
 | ---------- | ------------------------ | ------ |
 | 功能         | 批量注入配置文件中的属性             | 一个个指定  |
-| 松散绑定（松散语法） | 支持                       | 不支持    |
+| 松散绑定 | 支持                       | 不支持    |
 | SpEL       | 不支持                      | 支持     |
 | JSR303数据校验 | 支持                       | 不支持    |
-| 复杂类型封装     | 支持                       | 不支持    |
+| 复杂类型封装(集合)     | 支持                       | 不支持    |
 
-配置文件yml还是properties他们都能获取到值；
-
-如果说，我们只是在某个业务逻辑中需要获取一下配置文件中的某项值，使用@Value；
-
-如果说，我们专门编写了一个javaBean来和配置文件进行映射，我们就直接使用@ConfigurationProperties；
-
-
-
-#### 3、配置文件注入值数据校验
-
+#### 配置文件注入值数据校验
 ```java
 @Component
 @ConfigurationProperties(prefix = "person")
 @Validated
 public class Person {
 
-    /**
-     * <bean class="Person">
-     *      <property name="lastName" value="字面量/${key}从环境变量、配置文件中获取值/#{SpEL}"></property>
-     * <bean/>
-     */
-
-   //lastName必须是邮箱格式
-    @Email
     //@Value("${person.last-name}")
     private String lastName;
     //@Value("#{11*2}")
     private Integer age;
     //@Value("true")
     private Boolean boss;
-
     private Date birth;
     private Map<String,Object> maps;
     private List<Object> lists;

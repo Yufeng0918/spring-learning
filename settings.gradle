@@ -4,4 +4,6 @@ include 'spring-boot'
 include 'spring-boot:spring-boot-01-helloworld'
 findProject(':spring-boot:spring-boot-01-helloworld')?.name = 'spring-boot-01-helloworld'
 include 'spring-boot:spring-boot-01-helloworld'
+include 'spring-boot:spring-boot-02-config'
+findProject(':spring-boot:spring-boot-02-config')?.name = 'spring-boot-02-config'
 
