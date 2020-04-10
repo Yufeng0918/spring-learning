@@ -1,6 +1,3 @@
-server:
-  port: 8081
-
 #person:
 #  age: 18
 #  boss: false
@@ -13,3 +10,20 @@ server:
 #    name: dog
 #    age: 15
 #  last-name: yufeng
+
+
+server:
+  port: 8081
+spring:
+  profiles:
+    active: dev
+---
+server:
+  port: 8083
+spring:
+  profiles: dev
+---
+server:
+  port: 8084
+spring:
+  profiles: prod
