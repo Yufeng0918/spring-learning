@@ -780,34 +780,21 @@ logging.pattern.file=%d{yyyy-MM-dd} === [%thread] === %-5level === %logger{50} =
 #### 简介
 - 创建SpringBoot应用，选中我们需要的模块
 - SpringBoot已经默认将这些场景配置好了，只需要在配置文件中指定少量配置就可以运行起来
-- 自己编写业务代码
-
-
-
-**自动配置原理？**
-
-这个场景SpringBoot帮我们配置了什么？能不能修改？能修改哪些配置？能不能扩展？xxx
-
-```
-xxxxAutoConfiguration：帮我们给容器中自动配置组件；
-xxxxProperties:配置类来封装配置文件的内容；
-
-```
-
-
-
-## 2、SpringBoot对静态资源的映射规则；
-
+- 自动配置
+    + AutoConfiguration：帮我们给容器中自动配置组件
+    + Properties:配置类来封装配置文件的内容
+#### SpringBoot对静态资源的映射规则
+- /webjars/**, classpath:/META-INF/resources/webjars/ 找资源
+    + webjars：以jar包的方式引入静态资源
+    + 在访问的时候只需要写webjars下面资源的名称即可
+    + localhost:8080/webjars/jquery/3.3.1/jquery.js
 ```java
+//可以设置和静态资源有关的参数，缓存时间等
 @ConfigurationProperties(prefix = "spring.resources", ignoreUnknownFields = false)
-public class ResourceProperties implements ResourceLoaderAware {
-  //可以设置和静态资源有关的参数，缓存时间等
-```
+public class ResourceProperties implements ResourceLoaderAware { }
 
-
-
-```java
-	WebMvcAuotConfiguration：
+@Configuration(proxyBeanMethods = false)
+public class WebMvcAutoConfiguration {
 		@Override
 		public void addResourceHandlers(ResourceHandlerRegistry registry) {
 			if (!this.resourceProperties.isAddMappings()) {
@@ -869,36 +856,18 @@ public class ResourceProperties implements ResourceLoaderAware {
 						.setLocations(this.resourceProperties.getFaviconLocations());
 				return requestHandler;
 			}
-
 		}
-
+}
 ```
-
-
-
-==1）、所有 /webjars/** ，都去 classpath:/META-INF/resources/webjars/ 找资源；==
-
-​	webjars：以jar包的方式引入静态资源；
-
-http://www.webjars.org/
-
-![](images/搜狗截图20180203181751.png)
-
-localhost:8080/webjars/jquery/3.3.1/jquery.js
-
 ```xml
 <!--引入jquery-webjar-->在访问的时候只需要写webjars下面资源的名称即可
-		<dependency>
-			<groupId>org.webjars</groupId>
-			<artifactId>jquery</artifactId>
-			<version>3.3.1</version>
-		</dependency>
+<dependency>
+    <groupId>org.webjars</groupId>
+    <artifactId>jquery</artifactId>
+    <version>3.3.1</version>
+</dependency>
 ```
-
-
-
-==2）、"/**" 访问当前项目的任何资源，都去（静态资源的文件夹）找映射==
-
+- "/**" 访问当前项目的任何资源，都去（静态资源的文件夹）找映射
 ```
 "classpath:/META-INF/resources/", 
 "classpath:/resources/",
@@ -906,46 +875,28 @@ localhost:8080/webjars/jquery/3.3.1/jquery.js
 "classpath:/public/" 
 "/"：当前项目的根路径
 ```
-
-localhost:8080/abc ===  去静态资源文件夹里面找abc
-
-==3）、欢迎页； 静态资源文件夹下的所有index.html页面；被"/**"映射；==
-
-​	localhost:8080/   找index页面
-
-==4）、所有的 **/favicon.ico  都是在静态资源文件下找；==
-
-
-
-## 3、模板引擎
-
-JSP、Velocity、Freemarker、Thymeleaf
-
+- 欢迎页, 静态资源文件夹下的所有index.html页面；被"/**"映射
+​	+ localhost:8080/   找index页面
+- 所有的 **/favicon.ico  都是在静态资源文件下找；
+- 指定静态资源文件夹 spring.resources.static-locations
+#### 模板引擎
+- JSP, Velocity, Freemarker, Thymeleaf
 ![](images/template-engine.png)
-
-
-
-SpringBoot推荐的Thymeleaf；
-
-语法更简单，功能更强大；
-
-
-
-### 1、引入thymeleaf；
-
+- SpringBoot推荐的Thymeleaf；
+#### 引入thymeleaf；
+- 引入properties切换thymeleaf 和 thymeleaf-layout-dialect版本
 ```xml
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-thymeleaf</artifactId>
-          	2.1.6
-		</dependency>
-切换thymeleaf版本
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+    2.1.6
+</dependency>
 <properties>
-		<thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
-		<!-- 布局功能的支持程序  thymeleaf3主程序  layout2以上版本 -->
-		<!-- thymeleaf2   layout1-->
-		<thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
-  </properties>
+    <thymeleaf.version>3.0.9.RELEASE</thymeleaf.version>
+    <!-- 布局功能的支持程序  thymeleaf3主程序  layout2以上版本 -->
+    <!-- thymeleaf2   layout1-->
+    <thymeleaf-layout-dialect.version>2.2.2</thymeleaf-layout-dialect.version>
+</properties>
 ```
 
 

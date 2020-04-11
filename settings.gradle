@@ -10,4 +10,6 @@ include 'spring-boot:spring-boot-03-autoconfig'
 findProject(':spring-boot:spring-boot-03-autoconfig')?.name = 'spring-boot-03-autoconfig'
 include 'spring-boot:spring-boot-04-logging'
 findProject(':spring-boot:spring-boot-04-logging')?.name = 'spring-boot-04-logging'
+include 'spring-boot:spring-boot-05-restful'
+findProject(':spring-boot:spring-boot-05-restful')?.name = 'spring-boot-05-restful'
 
