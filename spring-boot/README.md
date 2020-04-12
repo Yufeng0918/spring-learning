@@ -1235,34 +1235,18 @@ public class MyMvcConfig implements WebMvcConfigurer {
         return new MyLocaleResolver();
     }
 }
-
-
 ```
-
-### 3）、登陆
-
-开发期间模板引擎页面修改以后，要实时生效
-
-1）、禁用模板引擎的缓存
-
+#### 登陆
+- 禁用模板引擎的缓存
 ```
 # 禁用缓存
 spring.thymeleaf.cache=false 
 ```
-
-2）、页面修改完成以后ctrl+f9：重新编译；
-
-
-
-登陆错误消息的显示
-
+- 页面修改完成以后ctrl+f9：重新编译， 错误信息是否为空进行判断
 ```html
 <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
 ```
-
-
-
-### 4）、拦截器进行登陆检查
+#### 拦截器进行登陆检查
 
 拦截器
 
