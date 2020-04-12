@@ -4,6 +4,7 @@
 + 简化Spring应用开发的一个框架
 + 整个Spring技术栈的一个大整合
 + J2EE开发的一站式解决方案
+***
 
 ## 2. 微服务
 + 2014，martin fowler
@@ -13,8 +14,7 @@
     + 一个应用应该是一组小型服务；可以通过HTTP的方式进行互通；
     + 每一个功能元素最终都是一个可独立替换和独立升级的软件单元；
     + [详细参照微服务文档](https://martinfowler.com/articles/microservices.html#MicroservicesAndSoa)
-
-
+***
 
 ## 3. Spring Boot HelloWorld
 #### 创建一个maven工程
@@ -68,8 +68,7 @@ public class HelloController {
     </plugins>
 </build>
 ```
-
-
+***
 
 ## 4. Hello World探究
 #### 父项目
@@ -143,6 +142,7 @@ public @interface SpringBootApplication{}
 @Import(EnableAutoConfigurationImportSelector.class)
 public @interface EnableAutoConfiguration {}
 ```
+***
 
 ## 5. 使用Spring Initializer快速创建Spring Boot项目
 #### IDEA：使用 Spring Initializer快速创建项目
@@ -199,8 +199,6 @@ pets:
 
 pets: [cat,dog,pig]
 ```
-
-
 
 ## 6. 配置文件值注入
 - 配置文件
@@ -352,7 +350,6 @@ person.dog.age=15
 ```
 
 
-
 ## 8. Profile
 #### 多Profile文件
 - 我们在主配置文件编写的时候，文件名可以是   application-{profile}.properties/yml
@@ -379,8 +376,7 @@ spring:
 - 在配置文件中指定  spring.profiles.active=dev
 - 命令行参数 java -jar spring-boot-02-config-0.0.1-SNAPSHOT.jar --spring.profiles.active=dev；
 - 虚拟机参数 -Dspring.profiles.active=dev
-
-
+***
 
 ## 9. 配置文件加载位置
 - springboot 启动会扫描以下位置的application.properties或者application.yml文件作为Spring boot的默认配置文件
@@ -1071,48 +1067,20 @@ public static class EnableWebMvcConfiguration extends DelegatingWebMvcConfigurat
       }
 }
 ```
-#### 全面接管SpringMVC；
-
-SpringBoot对SpringMVC的自动配置不需要了，所有都是我们自己配置；所有的SpringMVC的自动配置都失效了
-
-**我们需要在配置类中添加@EnableWebMvc即可；**
-
-```java
-//使用WebMvcConfigurerAdapter可以来扩展SpringMVC的功能
-@EnableWebMvc
-@Configuration
-public class MyMvcConfig extends WebMvcConfigurerAdapter {
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-       // super.addViewControllers(registry);
-        //浏览器发送 /atguigu 请求来到 success
-        registry.addViewController("/atguigu").setViewName("success");
-    }
-}
-```
-
-原理：
-
-为什么@EnableWebMvc自动配置就失效了；
-
-1）@EnableWebMvc的核心
-
+#### 全面接管SpringMVC并失效springmvc的自动配置
+- SpringBoot对SpringMVC的自动配置不需要了，所有都是我们自己配置；所有的SpringMVC的自动配置都失效了
+- 我们需要在配置类中添加@EnableWebMvc
+    + @EnableWebMvc的核心
+    + @EnableWebMvc将WebMvcConfigurationSupport组件导入进来；
+    + 导入的WebMvcConfigurationSupport只是SpringMVC最基本的功能；
+    + WebMvcAutoConfiguration 只有在没有WebMvcConfigurationSupport才生效
 ```java
 @Import(DelegatingWebMvcConfiguration.class)
-public @interface EnableWebMvc {
-```
+public @interface EnableWebMvc{}
 
-2）、
-
-```java
 @Configuration
-public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
-```
+public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport{}
 
-3）、
-
-```java
 @Configuration
 @ConditionalOnWebApplication
 @ConditionalOnClass({ Servlet.class, DispatcherServlet.class,
@@ -1122,12 +1090,10 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport {
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE + 10)
 @AutoConfigureAfter({ DispatcherServletAutoConfiguration.class,
 		ValidationAutoConfiguration.class })
-public class WebMvcAutoConfiguration {
+public class WebMvcAutoConfiguration{}
 ```
 
-4）、@EnableWebMvc将WebMvcConfigurationSupport组件导入进来；
 
-5）、导入的WebMvcConfigurationSupport只是SpringMVC最基本的功能；
 
 
 
