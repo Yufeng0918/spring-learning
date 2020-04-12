@@ -1,24 +1,59 @@
-plugins {
-    id 'org.springframework.boot' version '2.2.6.RELEASE'
-    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
-    id 'java'
+buildscript {
+    ext {
+        springBootVersion = '2.2.6.RELEASE'
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath (
+                "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}",
+                "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
+        )
+    }
 }
-group 'com.bp'
-version '1.0'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+
+allprojects {
+    group 'com.bp'
+    version '1.0'
+    apply plugin: 'idea'
+}
+
 
 repositories {
     mavenCentral()
 }
 
-dependencies {
-    implementation 'org.springframework.boot:spring-boot-starter-web'
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
+
+allprojects {
+    group 'com.diboot'
+    version '1.0-SNAPSHOT'
+    apply plugin: 'idea'
 }
 
-test {
-    useJUnitPlatform()
+subprojects {
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin:'io.spring.dependency-management'
+
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+    repositories {
+        mavenCentral()
+    }
+    ext {
+        springBootVersion = "2.2.6.RELEASE"
+    }
+    dependencies {
+        compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+        annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        testCompile "junit:junit:4.12"
+        testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
+        compileOnly 'org.projectlombok:lombok'
+        annotationProcessor 'org.projectlombok:lombok'
+    }
 }

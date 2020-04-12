@@ -1,48 +1,15 @@
-buildscript {
-    ext {
-        springBootVersion = '2.1.3.RELEASE'
-    }
-
-    repositories {
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath (
-                "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}",
-                "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
-        )
-    }
-}
-
-apply {
-    plugin("java")
-    plugin("maven")
-    plugin("idea")
-    plugin("org.springframework.boot")
-    plugin("io.spring.dependency-management")
-}
-
 group 'com.bp'
 version '1.0'
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
-repositories {
-    mavenCentral()
-}
 
 dependencies {
 
     implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.3.0'
     implementation 'org.webjars:jquery:3.3.1'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
-    testImplementation('org.springframework.boot:spring-boot-starter-test')
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
 }
 
 test {
     useJUnitPlatform()
 }
+
+
