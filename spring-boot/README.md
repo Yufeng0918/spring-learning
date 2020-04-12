@@ -1092,9 +1092,7 @@ public class DelegatingWebMvcConfiguration extends WebMvcConfigurationSupport{}
 		ValidationAutoConfiguration.class })
 public class WebMvcAutoConfiguration{}
 ```
-
-
-
+***
 
 
 ## 15. 如何修改SpringBoot的默认配置
@@ -1102,25 +1100,15 @@ public class WebMvcAutoConfiguration{}
 - SpringBoot在自动配置很多组件的时候，先看容器中有没有用户自己配置的（@Bean、@Component）如果有就用用户配置的，如果没有，才自动配置；如果有些组件可以有多个（ViewResolver）将用户配置的和自己默认的组合起来；
 - 在SpringBoot中会有非常多的Configurer帮助我们进行扩展配置
 - 在SpringBoot中会有很多的Customizer帮助我们进行定制配置
+***
 
-## 6、RestfulCRUD
-
-### 1）、默认访问首页
-
+## 16. Restful
+#### 默认访问首页
 ```java
-
 //使用WebMvcConfigurerAdapter可以来扩展SpringMVC的功能
-//@EnableWebMvc   不要接管SpringMVC
 @Configuration
 public class MyMvcConfig extends WebMvcConfigurerAdapter {
-
-    @Override
-    public void addViewControllers(ViewControllerRegistry registry) {
-       // super.addViewControllers(registry);
-        //浏览器发送 /atguigu 请求来到 success
-        registry.addViewController("/atguigu").setViewName("success");
-    }
-
+   
     //所有的WebMvcConfigurerAdapter组件都会一起起作用
     @Bean //将组件注册在容器
     public WebMvcConfigurerAdapter webMvcConfigurerAdapter(){
@@ -1134,29 +1122,12 @@ public class MyMvcConfig extends WebMvcConfigurerAdapter {
         return adapter;
     }
 }
-
 ```
-
-### 2）、国际化
-
-**1）、编写国际化配置文件；**
-
-2）、使用ResourceBundleMessageSource管理国际化资源文件
-
-3）、在页面使用fmt:message取出国际化内容
-
-
-
-步骤：
-
-1）、编写国际化配置文件，抽取页面需要显示的国际化消息
-
+#### 国际化
+- 编写国际化配置文件，抽取页面需要显示的国际化消息
 ![](images/搜狗截图20180211130721.png)
-
-
-
-2）、SpringBoot自动配置好了管理国际化资源文件的组件；
-
+- SpringBoot自动配置好了管理国际化资源文件的组件
+- 指定基础名字 spring.messages.basename=i18n.login
 ```java
 @ConfigurationProperties(prefix = "spring.messages")
 public class MessageSourceAutoConfiguration {
@@ -1186,28 +1157,16 @@ public class MessageSourceAutoConfiguration {
 		messageSource.setAlwaysUseMessageFormat(this.alwaysUseMessageFormat);
 		return messageSource;
 	}
+}
 ```
-
-
-
-3）、去页面获取国际化的值；
-
+- 去页面获取国际化的值 #{}
 ![](images/搜狗截图20180211134506.png)
-
-
-
 ```html
 <!DOCTYPE html>
 <html lang="en"  xmlns:th="http://www.thymeleaf.org">
 	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-		<meta name="description" content="">
-		<meta name="author" content="">
 		<title>Signin Template for Bootstrap</title>
-		<!-- Bootstrap core CSS -->
 		<link href="asserts/css/bootstrap.min.css" th:href="@{/webjars/bootstrap/4.0.0/css/bootstrap.css}" rel="stylesheet">
-		<!-- Custom styles for this template -->
 		<link href="asserts/css/signin.css" th:href="@{/asserts/css/signin.css}" rel="stylesheet">
 	</head>
 
@@ -1234,33 +1193,23 @@ public class MessageSourceAutoConfiguration {
 
 </html>
 ```
-
-效果：根据浏览器语言设置的信息切换了国际化；
-
-
-
-原理：
-
-​	国际化Locale（区域信息对象）；LocaleResolver（获取区域信息对象）；
-
+- 原理：国际化Locale（区域信息对象）；LocaleResolver（获取区域信息对象）；根据浏览器语言设置信息切换国际化
 ```java
-		@Bean
-		@ConditionalOnMissingBean
-		@ConditionalOnProperty(prefix = "spring.mvc", name = "locale")
-		public LocaleResolver localeResolver() {
-			if (this.mvcProperties
-					.getLocaleResolver() == WebMvcProperties.LocaleResolver.FIXED) {
-				return new FixedLocaleResolver(this.mvcProperties.getLocale());
-			}
-			AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
-			localeResolver.setDefaultLocale(this.mvcProperties.getLocale());
-			return localeResolver;
-		}
-默认的就是根据请求头带来的区域信息获取Locale进行国际化
+@Bean
+@ConditionalOnMissingBean
+@ConditionalOnProperty(prefix = "spring.mvc", name = "locale")
+public LocaleResolver localeResolver() {
+    if (this.mvcProperties.getLocaleResolver() == WebMvcProperties.LocaleResolver.FIXED) {
+        return new FixedLocaleResolver(this.mvcProperties.getLocale());
+    }
+    AcceptHeaderLocaleResolver localeResolver = new AcceptHeaderLocaleResolver();
+    localeResolver.setDefaultLocale(this.mvcProperties.getLocale());
+    return localeResolver;
+}
 ```
-
-4）、点击链接切换国际化
-
+- 点击链接切换国际化, 请求头的的区域信息
+    + 编写自己的localeResolver
+    + 讲localeResolver 加入容器中
 ```java
 /**
  * 可以在连接上携带区域信息
@@ -1277,15 +1226,11 @@ public class MyLocaleResolver implements LocaleResolver {
         }
         return locale;
     }
-
-    @Override
-    public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
-
-    }
 }
 
-
- @Bean
+@Configuration
+public class MyMvcConfig implements WebMvcConfigurer {
+    @Bean
     public LocaleResolver localeResolver(){
         return new MyLocaleResolver();
     }
