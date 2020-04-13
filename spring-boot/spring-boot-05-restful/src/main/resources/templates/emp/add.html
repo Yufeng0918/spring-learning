@@ -65,11 +65,11 @@
 						<input type="hidden" name="id" th:if="${emp!=null}" th:value="${emp.id}">
 						<div class="form-group">
 							<label>LastName</label>
-							<input name="lastName" type="text" class="form-control" placeholder="zhangsan" th:value="${emp!=null}?${emp.lastName}">
+							<input name="lastName" type="text" class="form-control" placeholder="empolyee" th:value="${emp!=null}?${emp.lastName}">
 						</div>
 						<div class="form-group">
 							<label>Email</label>
-							<input name="email" type="email" class="form-control" placeholder="zhangsan@atguigu.com" th:value="${emp!=null}?${emp.email}">
+							<input name="email" type="email" class="form-control" placeholder="empolyee@atguigu.com" th:value="${emp!=null}?${emp.email}">
 						</div>
 						<div class="form-group">
 							<label>Gender</label><br/>
@@ -84,14 +84,13 @@
 						</div>
 						<div class="form-group">
 							<label>department</label>
-							<!--提交的是部门的id-->
 							<select class="form-control" name="department.id">
 								<option th:selected="${emp!=null}?${dept.id == emp.department.id}" th:value="${dept.id}" th:each="dept:${depts}" th:text="${dept.departmentName}">1</option>
 							</select>
 						</div>
 						<div class="form-group">
 							<label>Birth</label>
-							<input name="birth" type="text" class="form-control" placeholder="zhangsan" th:value="${emp!=null}?${#dates.format(emp.birth, 'yyyy-MM-dd HH:mm')}">
+							<input name="birth" type="text" class="form-control" placeholder="employee" th:value="${emp!=null}?${#dates.format(emp.birth, 'yyyy-MM-dd HH:mm')}">
 						</div>
 						<button type="submit" class="btn btn-primary" th:text="${emp!=null}?'修改':'添加'">添加</button>
 					</form>

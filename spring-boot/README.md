@@ -1302,8 +1302,6 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
 | 修改员工                             | emp     | PUT      |
 | 删除员工                             | emp/1   | DELETE   |
 
-3）、员工列表：
-
 #### thymeleaf公共页面元素抽取
 - 抽取公共片段
 - 引入公共片段
@@ -1412,30 +1410,24 @@ insert的公共片段在div标签中
     <button type="submit" class="btn btn-primary">添加</button>
 </form>
 ```
-
-提交的数据格式不对：生日：日期；
-
-2017-12-12；2017/12/12；2017.12.12；
-
-日期的格式化；SpringMVC将页面提交的值需要转换为指定的类型;
-
-2017-12-12---Date； 类型转换，格式化;
-
-默认日期是按照/的方式；
-
+- 日期的格式化；SpringMVC将页面提交的值需要转换为指定的类型;
+- 默认日期是按照/的方式, 修改spring.mvc.date-format定制日期格式
 #### CRUD-员工修改
-
-修改添加二合一表单
-
+- 修改添加二合一表单
+- 导入配置HiddenHttpMethodFilter
+- 页面创建一个post表单
+- 创建一个input项，name="_method";值就是我们指定的请求方式
+```java
+@Bean
+public FilterRegistrationBean hiddenHttpMethodFilter() {
+    FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new HiddenHttpMethodFilter());
+    filterRegistrationBean.setUrlPatterns(Arrays.asList("/*"));
+    return filterRegistrationBean;
+}
+```
 ```html
 <!--需要区分是员工修改还是添加；-->
 <form th:action="@{/emp}" method="post">
-    <!--发送put请求修改员工数据-->
-    <!--
-1、SpringMVC中配置HiddenHttpMethodFilter;（SpringBoot自动配置好的）
-2、页面创建一个post表单
-3、创建一个input项，name="_method";值就是我们指定的请求方式
--->
     <input type="hidden" name="_method" value="put" th:if="${emp!=null}"/>
     <input type="hidden" name="id" th:if="${emp!=null}" th:value="${emp.id}">
     <div class="form-group">
@@ -1471,9 +1463,7 @@ insert的公共片段在div标签中
     <button type="submit" class="btn btn-primary" th:text="${emp!=null}?'修改':'添加'">添加</button>
 </form>
 ```
-
-### 8）、CRUD-员工删除
-
+#### CRUD-员工删除
 ```html
 <tr th:each="emp:${emps}">
     <td th:text="${emp.id}"></td>
@@ -1487,8 +1477,6 @@ insert的公共片段在div标签中
         <button th:attr="del_uri=@{/emp/}+${emp.id}" class="btn btn-sm btn-danger deleteBtn">删除</button>
     </td>
 </tr>
-
-
 <script>
     $(".deleteBtn").click(function(){
         //删除当前员工的
@@ -1497,225 +1485,116 @@ insert的公共片段在div标签中
     });
 </script>
 ```
+***
 
-
-
-## 7、错误处理机制
-
-### 1）、SpringBoot默认的错误处理机制
-
-默认效果：
-
-​		1）、浏览器，返回一个默认的错误页面
-
+## 17. 错误处理
+#### SpringBoot默认的错误处理机制
+- 默认效果：浏览器，返回一个默认的错误页面
 ![](images/搜狗截图20180226173408.png)
-
-  浏览器发送请求的请求头：
-
-![](images/搜狗截图20180226180347.png)
-
-​		2）、如果是其他客户端，默认响应一个json数据
-
+- 如果是其他客户端，默认响应一个json数据
 ![](images/搜狗截图20180226173527.png)
-
-​		![](images/搜狗截图20180226180504.png)
-
-原理：
-
-​	可以参照ErrorMvcAutoConfiguration；错误处理的自动配置；
-
-  	给容器中添加了以下组件
-
-​	1、DefaultErrorAttributes：
-
+- ErrorMvcAutoConfiguration；错误处理的自动配置；
+    + DefaultErrorAttributes
+    + ErrorPageCustomizer
+        + 系统出现错误以后来到/error请求进行处理
+    + BasicErrorController 
+        + 处理默认/error请求
+        + ModelAndView 返回 html 数据
+        + ResponseEntity 返回 json 数据
+        + 转入页面并传入错误状态码
+    + DefaultErrorViewResolver
+        + 从模板文件夹找 /error/${code}.html
+        + 从静态资源文件夹 /error/${code}.html
+        + 客户端错误 4xx.html, 服务端错误 5xx.html 作为默认错误
 ```java
-帮我们在页面共享信息；
-@Override
-	public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes,
-			boolean includeStackTrace) {
-		Map<String, Object> errorAttributes = new LinkedHashMap<String, Object>();
-		errorAttributes.put("timestamp", new Date());
-		addStatus(errorAttributes, requestAttributes);
-		addErrorDetails(errorAttributes, requestAttributes, includeStackTrace);
-		addPath(errorAttributes, requestAttributes);
-		return errorAttributes;
-	}
-```
+public class DefaultErrorAttributes {
+    @Override
+    public Map<String, Object> getErrorAttributes(RequestAttributes requestAttributes, boolean includeStackTrace) {
+        Map<String, Object> errorAttributes = new LinkedHashMap<String, Object>();
+        errorAttributes.put("timestamp", new Date());
+        addStatus(errorAttributes, requestAttributes);
+        addErrorDetails(errorAttributes, requestAttributes, includeStackTrace);
+        addPath(errorAttributes, requestAttributes);
+        return errorAttributes;
+    }
+}
+
+public class ErrorPageCustomizer {
+	@Value("${error.path:/error}")
+	private String path = "/error";
+}
 
 
-
-​	2、BasicErrorController：处理默认/error请求
-
-```java
 @Controller
 @RequestMapping("${server.error.path:${error.path:/error}}")
 public class BasicErrorController extends AbstractErrorController {
     
-    @RequestMapping(produces = "text/html")//产生html类型的数据；浏览器发送的请求来到这个方法处理
+    @RequestMapping(produces = "text/html")
 	public ModelAndView errorHtml(HttpServletRequest request,
 			HttpServletResponse response) {
 		HttpStatus status = getStatus(request);
 		Map<String, Object> model = Collections.unmodifiableMap(getErrorAttributes(
 				request, isIncludeStackTrace(request, MediaType.TEXT_HTML)));
 		response.setStatus(status.value());
-        
-        //去哪个页面作为错误页面；包含页面地址和页面内容
+        //去哪个页面作为错误页面
 		ModelAndView modelAndView = resolveErrorView(request, response, status, model);
 		return (modelAndView == null ? new ModelAndView("error", model) : modelAndView);
 	}
 
 	@RequestMapping
-	@ResponseBody    //产生json数据，其他客户端来到这个方法处理；
+	@ResponseBody
 	public ResponseEntity<Map<String, Object>> error(HttpServletRequest request) {
 		Map<String, Object> body = getErrorAttributes(request,
 				isIncludeStackTrace(request, MediaType.ALL));
 		HttpStatus status = getStatus(request);
 		return new ResponseEntity<Map<String, Object>>(body, status);
 	}
-```
+}
 
-
-
-​	3、ErrorPageCustomizer：
-
-```java
-	@Value("${error.path:/error}")
-	private String path = "/error";  系统出现错误以后来到error请求进行处理；（web.xml注册的错误页面规则）
-```
-
-
-
-​	4、DefaultErrorViewResolver：
-
-```java
 @Override
-	public ModelAndView resolveErrorView(HttpServletRequest request, HttpStatus status,
-			Map<String, Object> model) {
-		ModelAndView modelAndView = resolve(String.valueOf(status), model);
-		if (modelAndView == null && SERIES_VIEWS.containsKey(status.series())) {
-			modelAndView = resolve(SERIES_VIEWS.get(status.series()), model);
-		}
-		return modelAndView;
-	}
+public ModelAndView resolveErrorView(HttpServletRequest request, HttpStatus status,
+        Map<String, Object> model) {
+    ModelAndView modelAndView = resolve(String.valueOf(status), model);
+    if (modelAndView == null && SERIES_VIEWS.containsKey(status.series())) {
+        modelAndView = resolve(SERIES_VIEWS.get(status.series()), model);
+    }
+    return modelAndView;
+}
 
-	private ModelAndView resolve(String viewName, Map<String, Object> model) {
-        //默认SpringBoot可以去找到一个页面？  error/404
-		String errorViewName = "error/" + viewName;
-        
-        //模板引擎可以解析这个页面地址就用模板引擎解析
-		TemplateAvailabilityProvider provider = this.templateAvailabilityProviders
-				.getProvider(errorViewName, this.applicationContext);
-		if (provider != null) {
-            //模板引擎可用的情况下返回到errorViewName指定的视图地址
-			return new ModelAndView(errorViewName, model);
-		}
-        //模板引擎不可用，就在静态资源文件夹下找errorViewName对应的页面   error/404.html
-		return resolveResource(errorViewName, model);
-	}
-```
-
-
-
-​	步骤：
-
-​		一但系统出现4xx或者5xx之类的错误；ErrorPageCustomizer就会生效（定制错误的响应规则）；就会来到/error请求；就会被**BasicErrorController**处理；
-
-​		1）响应页面；去哪个页面是由**DefaultErrorViewResolver**解析得到的；
-
-```java
-protected ModelAndView resolveErrorView(HttpServletRequest request,
-      HttpServletResponse response, HttpStatus status, Map<String, Object> model) {
-    //所有的ErrorViewResolver得到ModelAndView
-   for (ErrorViewResolver resolver : this.errorViewResolvers) {
-      ModelAndView modelAndView = resolver.resolveErrorView(request, status, model);
-      if (modelAndView != null) {
-         return modelAndView;
-      }
-   }
-   return null;
+private ModelAndView resolve(String viewName, Map<String, Object> model) {
+    //默认SpringBoot可以去找到一个页面 error/404
+    String errorViewName = "error/" + viewName;
+    
+    //模板引擎可以解析这个页面地址就用模板引擎解析
+    TemplateAvailabilityProvider provider = this.templateAvailabilityProviders
+            .getProvider(errorViewName, this.applicationContext);
+    if (provider != null) {
+        //模板引擎可用的情况下返回到errorViewName指定的视图地址
+        return new ModelAndView(errorViewName, model);
+    }
+    //模板引擎不可用，就在静态资源文件夹下找errorViewName对应的页面   error/404.html
+    return resolveResource(errorViewName, model);
 }
 ```
-
-### 2）、如果定制错误响应：
-
-#### 	**1）、如何定制错误的页面；**
-
-​			**1）、有模板引擎的情况下；error/状态码;** 【将错误页面命名为  错误状态码.html 放在模板引擎文件夹里面的 error文件夹下】，发生此状态码的错误就会来到  对应的页面；
-
-​			我们可以使用4xx和5xx作为错误页面的文件名来匹配这种类型的所有错误，精确优先（优先寻找精确的状态码.html）；		
-
-​			页面能获取的信息；
-
-​				timestamp：时间戳
-
-​				status：状态码
-
-​				error：错误提示
-
-​				exception：异常对象
-
-​				message：异常消息
-
-​				errors：JSR303数据校验的错误都在这里
-
-​			2）、没有模板引擎（模板引擎找不到这个错误页面），静态资源文件夹下找；
-
-​			3）、以上都没有错误页面，就是默认来到SpringBoot默认的错误提示页面；
-
-
-
-#### 	2）、如何定制错误的json数据；
-
-​		1）、自定义异常处理&返回定制json数据；
-
-```java
-@ControllerAdvice
-public class MyExceptionHandler {
-
-    @ResponseBody
-    @ExceptionHandler(UserNotExistException.class)
-    public Map<String,Object> handleException(Exception e){
-        Map<String,Object> map = new HashMap<>();
-        map.put("code","user.notexist");
-        map.put("message",e.getMessage());
-        return map;
-    }
-}
-//没有自适应效果...
-```
-
-
-
-​		2）、转发到/error进行自适应响应效果处理
-
-```java
- @ExceptionHandler(UserNotExistException.class)
-    public String handleException(Exception e, HttpServletRequest request){
-        Map<String,Object> map = new HashMap<>();
-        //传入我们自己的错误状态码  4xx 5xx，否则就不会进入定制错误页面的解析流程
-        /**
-         * Integer statusCode = (Integer) request
-         .getAttribute("javax.servlet.error.status_code");
-         */
-        request.setAttribute("javax.servlet.error.status_code",500);
-        map.put("code","user.notexist");
-        map.put("message",e.getMessage());
-        //转发到/error
-        return "forward:/error";
-    }
-```
-
-#### 	3）、将我们的定制数据携带出去；
-
-出现错误以后，会来到/error请求，会被BasicErrorController处理，响应出去可以获取的数据是由getErrorAttributes得到的（是AbstractErrorController（ErrorController）规定的方法）；
-
-​	1、完全来编写一个ErrorController的实现类【或者是编写AbstractErrorController的子类】，放在容器中；
-
-​	2、页面上能用的数据，或者是json返回能用的数据都是通过errorAttributes.getErrorAttributes得到；
-
-​			容器中DefaultErrorAttributes.getErrorAttributes()；默认进行数据处理的；
-
-自定义ErrorAttributes
+#### 定制错误的页面
+- 有模板引擎的情况下；error/状态码;** 
+- 我们可以使用4xx和5xx作为错误页面的文件名来匹配这种类型的所有错误，精确优先（优先寻找精确的状态码.html）；		
+​   + timestamp：时间戳
+​   + status：状态码
+​   + error：错误提示
+​   + exception：异常对象
+​   + message：异常消息
+   + errors：JSR303数据校验的错误都在这里
+- 没有模板引擎（模板引擎找不到这个错误页面），静态资源文件夹下找；
+- 以上都没有错误页面，就是默认来到SpringBoot默认的错误提示页面；
+#### 定制错误的json数据；
+- 将我们的定制数据携带出去；
+    + 出现错误以后，会来到/error请求，会被BasicErrorController处理
+    + 响应出去可以获取的数据是由getErrorAttributes得到的
+        + 完全来编写一个ErrorController的实现类放在容器中；
+        + 页面上能用的数据，或者是json返回能用的数据都是通过errorAttributes.getErrorAttributes得到；
+            + 容器中DefaultErrorAttributes.getErrorAttributes()；默认进行数据处理的；
+            + 自定义ErrorAttributes
 
 ```java
 //给容器中加入我们自己定义的ErrorAttributes
@@ -1730,9 +1609,6 @@ public class MyErrorAttributes extends DefaultErrorAttributes {
     }
 }
 ```
-
-最终的效果：响应是自适应的，可以通过定制ErrorAttributes改变需要返回的内容，
-
 ![](images/搜狗截图20180228135513.png)
 
 

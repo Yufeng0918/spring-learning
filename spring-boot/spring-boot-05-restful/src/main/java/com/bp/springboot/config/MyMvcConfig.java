@@ -2,12 +2,16 @@ package com.bp.springboot.config;
 
 import com.bp.springboot.component.MyLocaleResolver;
 import com.bp.springboot.controller.LoginHandlerInterceptor;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.util.Arrays;
 
 /**
  * @Auther: daiyu
@@ -45,5 +49,12 @@ public class MyMvcConfig implements WebMvcConfigurer {
     @Bean
     public LocaleResolver localeResolver(){
         return new MyLocaleResolver();
+    }
+
+    @Bean
+    public FilterRegistrationBean hiddenHttpMethodFilter() {
+        FilterRegistrationBean filterRegistrationBean = new FilterRegistrationBean(new HiddenHttpMethodFilter());
+        filterRegistrationBean.setUrlPatterns(Arrays.asList("/*"));
+        return filterRegistrationBean;
     }
 }
