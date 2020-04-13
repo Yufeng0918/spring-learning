@@ -2,3 +2,14 @@ GET http://localhost:8080/success
 Accept: application/json
 
 ###
+
+GET http://localhost:8080/hello?user=aaa
+Accept: application/json
+
+####
+
+
+GET http://localhost:8080/hello
+Accept: application/json
+
+####

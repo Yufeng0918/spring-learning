@@ -1263,7 +1263,8 @@ public WebMvcConfigurer webMvcConfigurer() {
 }
 ```
 - 拦截器进行登陆检查
-- 注册拦截去
+    + Springboot 1.0 不会拦截静态资源
+    + Springboot 2.0 拦截静态资源
 ```java
 public class LoginHandlerInterceptor implements HandlerInterceptor {
     @Override
