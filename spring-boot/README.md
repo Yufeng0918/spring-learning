@@ -1246,17 +1246,26 @@ spring.thymeleaf.cache=false
 ```html
 <p style="color: red" th:text="${msg}" th:if="${not #strings.isEmpty(msg)}"></p>
 ```
-#### 拦截器进行登陆检查
-
-拦截器
-
+- 重定向到主页
 ```java
+public String login(@RequestParam("username") String username, @RequestParam("password") String password, Map<String, Object> map) {
+    return "redirect:/main";
+}
 
-/**
- * 登陆检查，
- */
+@Bean
+public WebMvcConfigurer webMvcConfigurer() {
+    return new WebMvcConfigurer() {
+        @Override
+        public void addViewControllers(ViewControllerRegistry registry) {
+            registry.addViewController("/main.html").setViewName("dashboard");
+        }
+    };
+}
+```
+- 拦截器进行登陆检查
+- 注册拦截去
+```java
 public class LoginHandlerInterceptor implements HandlerInterceptor {
-    //目标方法执行之前
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Object user = request.getSession().getAttribute("loginUser");
@@ -1265,63 +1274,14 @@ public class LoginHandlerInterceptor implements HandlerInterceptor {
             request.setAttribute("msg","没有权限请先登陆");
             request.getRequestDispatcher("/index.html").forward(request,response);
             return false;
-        }else{
-            //已登陆，放行请求
-            return true;
         }
-
-    }
-
-    @Override
-    public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler, ModelAndView modelAndView) throws Exception {
-
-    }
-
-    @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
-
+        return true;
     }
 }
-
 ```
-
-
-
-注册拦截器
-
-```java
-  //所有的WebMvcConfigurerAdapter组件都会一起起作用
-    @Bean //将组件注册在容器
-    public WebMvcConfigurerAdapter webMvcConfigurerAdapter(){
-        WebMvcConfigurerAdapter adapter = new WebMvcConfigurerAdapter() {
-            @Override
-            public void addViewControllers(ViewControllerRegistry registry) {
-                registry.addViewController("/").setViewName("login");
-                registry.addViewController("/index.html").setViewName("login");
-                registry.addViewController("/main.html").setViewName("dashboard");
-            }
-
-            //注册拦截器
-            @Override
-            public void addInterceptors(InterceptorRegistry registry) {
-                //super.addInterceptors(registry);
-                //静态资源；  *.css , *.js
-                //SpringBoot已经做好了静态资源映射
-                registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**")
-                        .excludePathPatterns("/index.html","/","/user/login");
-            }
-        };
-        return adapter;
-    }
-```
-
-### 5）、CRUD-员工列表
-
-实验要求：
-
-1）、RestfulCRUD：CRUD满足Rest风格；
-
-URI：  /资源名称/资源标识       HTTP请求方式区分对资源CRUD操作
+#### CRUD-员工列表
+- RestfulCRUD：CRUD满足Rest风格；
+- URI：/资源名称/资源标识, HTTP请求方式区分对资源CRUD操作
 
 |      | 普通CRUD（uri来区分操作） | RestfulCRUD       |
 | ---- | ------------------------- | ----------------- |
@@ -1330,7 +1290,7 @@ URI：  /资源名称/资源标识       HTTP请求方式区分对资源CRUD操�
 | 修改 | updateEmp?id=xxx&xxx=xx   | emp/{id}---PUT    |
 | 删除 | deleteEmp?id=1            | emp/{id}---DELETE |
 
-2）、实验的请求架构;
+- 实验的请求架构;
 
 | 实验功能                             | 请求URI | 请求方式 |
 | ------------------------------------ | ------- | -------- |
@@ -1345,36 +1305,25 @@ URI：  /资源名称/资源标识       HTTP请求方式区分对资源CRUD操�
 3）、员工列表：
 
 #### thymeleaf公共页面元素抽取
-
+- 抽取公共片段
+- 引入公共片段
 ```html
-1、抽取公共片段
 <div th:fragment="copy">
 &copy; 2011 The Good Thymes Virtual Grocery
 </div>
 
-2、引入公共片段
 <div th:insert="~{footer :: copy}"></div>
 ~{templatename::selector}：模板名::选择器
 ~{templatename::fragmentname}:模板名::片段名
 
-3、默认效果：
 insert的公共片段在div标签中
 如果使用th:insert等属性进行引入，可以不用写~{}：
 行内写法可以加上：[[~{}]];[(~{})]；
 ```
-
-
-
-三种引入公共片段的th属性：
-
-**th:insert**：将公共片段整个插入到声明引入的元素中
-
-**th:replace**：将声明引入的元素替换为公共片段
-
-**th:include**：将被引入的片段的内容包含进这个标签中
-
-
-
+- 三种引入公共片段的th属性：
+    + th:insert：将公共片段整个插入到声明引入的元素中
+    + th:replace：将声明引入的元素替换为公共片段
+    + th:include：将被引入的片段的内容包含进这个标签中
 ```html
 <footer th:fragment="copy">
 &copy; 2011 The Good Thymes Virtual Grocery
@@ -1400,13 +1349,8 @@ insert的公共片段在div标签中
 &copy; 2011 The Good Thymes Virtual Grocery
 </div>
 ```
-
-
-
-引入片段的时候传入参数： 
-
+- 引入片段的时候传入参数
 ```html
-
 <nav class="col-md-2 d-none d-md-block bg-light sidebar" id="sidebar">
     <div class="sidebar-sticky">
         <ul class="nav flex-column">
@@ -1421,15 +1365,15 @@ insert的公共片段在div标签中
                     Dashboard <span class="sr-only">(current)</span>
                 </a>
             </li>
+        </ul>
+    </div>
+</nav>
 
 <!--引入侧边栏;传入参数-->
 <div th:replace="commons/bar::#sidebar(activeUri='emps')"></div>
 ```
-
-### 6）、CRUD-员工添加
-
-添加页面
-
+#### CRUD-员工添加
+- 添加页面
 ```html
 <form>
     <div class="form-group">
@@ -1479,7 +1423,7 @@ insert的公共片段在div标签中
 
 默认日期是按照/的方式；
 
-### 7）、CRUD-员工修改
+#### CRUD-员工修改
 
 修改添加二合一表单
 
