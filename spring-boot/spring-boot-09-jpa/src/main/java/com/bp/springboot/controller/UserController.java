@@ -13,7 +13,7 @@ import java.util.Optional;
 public class UserController {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @GetMapping("/user/{id}")
     public User getUser(@PathVariable("id") Integer id){
