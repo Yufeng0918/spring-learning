@@ -28,8 +28,8 @@ repositories {
 
 
 allprojects {
-    group 'com.diboot'
-    version '1.0-SNAPSHOT'
+    group 'com.bp'
+    version '1.0'
     apply plugin: 'idea'
 }
 
@@ -53,9 +53,15 @@ subprojects {
 //        compile.exclude module: "spring-boot-starter-tomcat"
 //    }
 
+//    configure(subprojects - project(':MAIN_MODULE_1')) {
+//        apply plugin: 'java'
+//        dependencies {
+//            compile project('MAIN_MODULE_1')
+//        }
+//    }
     dependencies {
-        compile ("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
-        implementation "org.springframework.boot:spring-boot-starter-jetty"
+        implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+//        implementation "org.springframework.boot:spring-boot-starter-jetty"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
         testCompile "junit:junit:4.12"
         testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"

@@ -1892,26 +1892,13 @@ public class TomcatWebServer {
 ```
 ***
 
-
-
-## 9、使用外置的Servlet容器
-
-嵌入式Servlet容器：应用打成可执行的jar
-
-​		优点：简单、便携；
-
-​		缺点：默认不支持JSP、优化定制比较复杂（使用定制器【ServerProperties、自定义EmbeddedServletContainerCustomizer】，自己编写嵌入式Servlet容器的创建工厂【EmbeddedServletContainerFactory】）；
-
-
-
-外置的Servlet容器：外面安装Tomcat---应用war包的方式打包；
-
-### 步骤
-
-1）、必须创建一个war项目；（利用idea创建好目录结构）
-
-2）、将嵌入式的Tomcat指定为provided；
-
+## 19. 使用外置的Servlet容器
+#### 嵌入式Servlet容器：应用打成可执行的jar
+- 优点：简单、便携；
+- 缺点：默认不支持JSP、优化定制比较复杂, 定制器 ServerProperties, WebServletContainerCustomizer
+#### 外置的Servlet容器：外面安装Tomcat---应用war包的方式打包；
+- 必须创建一个war项目；（利用idea创建好目录结构）
+- 将嵌入式的Tomcat指定为provided；
 ```xml
 <dependency>
    <groupId>org.springframework.boot</groupId>
@@ -1919,46 +1906,25 @@ public class TomcatWebServer {
    <scope>provided</scope>
 </dependency>
 ```
-
-3）、必须编写一个**SpringBootServletInitializer**的子类，并调用configure方法
-
+- 必须编写一个SpringBootServletInitializer的子类，并调用configure方法
+- 启动服务器就可以使用
 ```java
 public class ServletInitializer extends SpringBootServletInitializer {
 
    @Override
    protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-       //传入SpringBoot应用的主程序
       return application.sources(SpringBoot04WebJspApplication.class);
    }
-
 }
 ```
-
-4）、启动服务器就可以使用；
-
-### 原理
-
-jar包：执行SpringBoot主类的main方法，启动ioc容器，创建嵌入式的Servlet容器；
-
-war包：启动服务器，**服务器启动SpringBoot应用**【SpringBootServletInitializer】，启动ioc容器；
-
-
-
-servlet3.0（Spring注解版）：
-
-8.2.4 Shared libraries / runtimes pluggability：
-
-规则：
-
-​	1）、服务器启动（web应用启动）会创建当前web应用里面每一个jar包里面ServletContainerInitializer实例：
-
-​	2）、ServletContainerInitializer的实现放在jar包的META-INF/services文件夹下，有一个名为javax.servlet.ServletContainerInitializer的文件，内容就是ServletContainerInitializer的实现类的全类名
-
-​	3）、还可以使用@HandlesTypes，在应用启动的时候加载我们感兴趣的类；
-
-
-
-流程：
+#### 原理
+- jar包：执行SpringBoot主类的main方法，启动ioc容器，创建嵌入式的Servlet容器；
+- war包：启动服务器，服务器启动SpringBoot应用，启动ioc容器；
+- 规则
+    + 服务器启动（web应用启动）会创建当前web应用里面每一个jar包里面ServletContainerInitializer实例：
+    + ServletContainerInitializer的实现放在jar包的META-INF/services文件夹下，有一个名为javax.servlet.ServletContainerInitializer的文件，内容就是ServletContainerInitializer的实现类的全类名
+    + 还可以使用@HandlesTypes，在应用启动的时候加载我们感兴趣的类；
+- 流程
 
 1）、启动Tomcat
 

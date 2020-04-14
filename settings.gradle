@@ -11,4 +11,6 @@ include 'spring-boot:spring-boot-04-logging'
 findProject(':spring-boot:spring-boot-04-logging')?.name = 'spring-boot-04-logging'
 include 'spring-boot:spring-boot-05-restful'
 findProject(':spring-boot:spring-boot-05-restful')?.name = 'spring-boot-05-restful'
+include 'spring-boot:spring-boot-06-jsp'
+findProject(':spring-boot:spring-boot-06-jsp')?.name = 'spring-boot-06-jsp'
 
