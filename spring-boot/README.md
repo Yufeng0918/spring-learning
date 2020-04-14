@@ -1918,74 +1918,66 @@ public class ServletInitializer extends SpringBootServletInitializer {
 }
 ```
 #### 原理
-- jar包：执行SpringBoot主类的main方法，启动ioc容器，创建嵌入式的Servlet容器；
 - war包：启动服务器，服务器启动SpringBoot应用，启动ioc容器；
-- 规则
-    + 服务器启动（web应用启动）会创建当前web应用里面每一个jar包里面ServletContainerInitializer实例：
+- Servlet 3.0 规范
+    + 服务器启动会创建当前web应用里面每一个jar包里面ServletContainerInitializer实例
     + ServletContainerInitializer的实现放在jar包的META-INF/services文件夹下，有一个名为javax.servlet.ServletContainerInitializer的文件，内容就是ServletContainerInitializer的实现类的全类名
-    + 还可以使用@HandlesTypes，在应用启动的时候加载我们感兴趣的类；
+    + ServletContainerInitializer实现类还可以使用@HandlesTypes加载所需要的类
 - 流程
-
-1）、启动Tomcat
-
-2）、org\springframework\spring-web\4.3.14.RELEASE\spring-web-4.3.14.RELEASE.jar!\META-INF\services\javax.servlet.ServletContainerInitializer：
-
-Spring的web模块里面有这个文件：**org.springframework.web.SpringServletContainerInitializer**
-
-3）、SpringServletContainerInitializer将@HandlesTypes(WebApplicationInitializer.class)标注的所有这个类型的类都传入到onStartup方法的Set<Class<?>>；为这些WebApplicationInitializer类型的类创建实例；
-
-4）、每一个WebApplicationInitializer都调用自己的onStartup；
-
+    + 启动Tomcat
+    + org\springframework\spring-web\4.3.14.RELEASE\spring-web-4.3.14.RELEASE.jar!\META-INF\services\javax.servlet.ServletContainerInitializer
+    + SpringServletContainerInitializer
+        + @HandlesTypes(WebApplicationInitializer.class)标注的所有这个类型的类都传入到onStartup方法的Set<Class<?>>
+        + 为这些WebApplicationInitializer类型的类创建实例；
+    + 每一个WebApplicationInitializer都调用自己的onStartup；
+    + SpringBootServletInitializer implements WebApplicationInitializer 的类会被创建对象，并执行onStartup方法
+    + SpringBootServletInitializer实例执行onStartup的时候会createRootApplicationContext；创建容器
+    + 子类ServletInitializer 重写了这个方法，将SpringBoot的主程序类传入了进来
+    + Spring的应用就启动并且创建IOC容器
+        + 没有tomcat的容器的class， 所以不会启动内置的tomcat
 ![](images/搜狗截图20180302221835.png)
-
-5）、相当于我们的SpringBootServletInitializer的类会被创建对象，并执行onStartup方法
-
-6）、SpringBootServletInitializer实例执行onStartup的时候会createRootApplicationContext；创建容器
-
 ```java
-protected WebApplicationContext createRootApplicationContext(
-      ServletContext servletContext) {
-    //1、创建SpringApplicationBuilder
-   SpringApplicationBuilder builder = createSpringApplicationBuilder();
-   StandardServletEnvironment environment = new StandardServletEnvironment();
-   environment.initPropertySources(servletContext, null);
-   builder.environment(environment);
-   builder.main(getClass());
-   ApplicationContext parent = getExistingRootWebApplicationContext(servletContext);
-   if (parent != null) {
-      this.logger.info("Root context already created (using as parent).");
-      servletContext.setAttribute(
-            WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, null);
-      builder.initializers(new ParentContextApplicationContextInitializer(parent));
-   }
-   builder.initializers(
-         new ServletContextApplicationContextInitializer(servletContext));
-   builder.contextClass(AnnotationConfigEmbeddedWebApplicationContext.class);
-    
-    //调用configure方法，子类重写了这个方法，将SpringBoot的主程序类传入了进来
-   builder = configure(builder);
-    
-    //使用builder创建一个Spring应用
-   SpringApplication application = builder.build();
-   if (application.getSources().isEmpty() && AnnotationUtils
-         .findAnnotation(getClass(), Configuration.class) != null) {
-      application.getSources().add(getClass());
-   }
-   Assert.state(!application.getSources().isEmpty(),
-         "No SpringApplication sources have been defined. Either override the "
-               + "configure method or add an @Configuration annotation");
-   // Ensure error pages are registered
-   if (this.registerErrorPageFilter) {
-      application.getSources().add(ErrorPageFilterConfiguration.class);
-   }
-    //启动Spring应用
-   return run(application);
+public class SpringBootServletInitializer implements WebApplicationInitializer {
+    protected WebApplicationContext createRootApplicationContext(
+          ServletContext servletContext) {
+        //1、创建SpringApplicationBuilder
+       SpringApplicationBuilder builder = createSpringApplicationBuilder();
+       StandardServletEnvironment environment = new StandardServletEnvironment();
+       environment.initPropertySources(servletContext, null);
+       builder.environment(environment);
+       builder.main(getClass());
+       ApplicationContext parent = getExistingRootWebApplicationContext(servletContext);
+       if (parent != null) {
+          this.logger.info("Root context already created (using as parent).");
+          servletContext.setAttribute(
+                WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE, null);
+          builder.initializers(new ParentContextApplicationContextInitializer(parent));
+       }
+       builder.initializers(
+             new ServletContextApplicationContextInitializer(servletContext));
+       builder.contextClass(AnnotationConfigEmbeddedWebApplicationContext.class);
+        
+        //调用configure方法，子类重写了这个方法，将SpringBoot的主程序类传入了进来
+       builder = configure(builder);
+        
+        //使用builder创建一个Spring应用
+       SpringApplication application = builder.build();
+       if (application.getSources().isEmpty() && AnnotationUtils
+             .findAnnotation(getClass(), Configuration.class) != null) {
+          application.getSources().add(getClass());
+       }
+       Assert.state(!application.getSources().isEmpty(),
+             "No SpringApplication sources have been defined. Either override the "
+                   + "configure method or add an @Configuration annotation");
+       // Ensure error pages are registered
+       if (this.registerErrorPageFilter) {
+          application.getSources().add(ErrorPageFilterConfiguration.class);
+       }
+        //启动Spring应用
+       return run(application);
+    }
 }
-```
 
-7）、Spring的应用就启动并且创建IOC容器
-
-```java
 public ConfigurableApplicationContext run(String... args) {
    StopWatch stopWatch = new StopWatch();
    stopWatch.start();
@@ -2022,105 +2014,51 @@ public ConfigurableApplicationContext run(String... args) {
    }
 }
 ```
+***
 
-**==启动Servlet容器，再启动SpringBoot应用==**
-
-
-
-# 五、Docker
-
-## 1、简介
-
-**Docker**是一个开源的应用容器引擎；是一个轻量级容器技术；
-
-Docker支持将软件编译成一个镜像；然后在镜像中各种软件做好配置，将镜像发布出去，其他使用者可以直接使用这个镜像；
-
-运行中的这个镜像称为容器，容器启动是非常快速的。
-
-![](images/搜狗截图20180303145450.png)
-
-
-
+## 19. Docker
+#### 简介
+- Docker是一个开源的应用容器引擎；是一个轻量级容器技术；
+- Docker支持将软件编译成一个镜像；然后在镜像中各种软件做好配置，将镜像发布出去，其他使用者可以直接使用这个镜像；
+- 运行中的这个镜像称为容器，容器启动是非常快速的。
 ![](images/搜狗截图20180303145531.png)
-
-## 2、核心概念
-
-docker主机(Host)：安装了Docker程序的机器（Docker直接安装在操作系统之上）；
-
-docker客户端(Client)：连接docker主机进行操作；
-
-docker仓库(Registry)：用来保存各种打包好的软件镜像；
-
-docker镜像(Images)：软件打包好的镜像；放在docker仓库中；
-
-docker容器(Container)：镜像启动后的实例称为一个容器；容器是独立运行的一个或一组应用
-
+#### 2、核心概念
+- docker主机(Host)：安装了Docker程序的机器
+- docker客户端(Client)：连接docker主机进行操作；
+- docker仓库(Registry)：用来保存各种打包好的软件镜像；
+- docker镜像(Images)：软件打包好的镜像；放在docker仓库中；
+- docker容器(Container)：镜像启动后的实例称为一个容器；容器是独立运行的一个或一组应用
 ![](images/搜狗截图20180303165113.png)
-
-使用Docker的步骤：
-
-1）、安装Docker
-
-2）、去Docker仓库找到这个软件对应的镜像；
-
-3）、使用Docker运行这个镜像，这个镜像就会生成一个Docker容器；
-
-4）、对容器的启动停止就是对软件的启动停止；
-
-## 3、安装Docker
-
-#### 1）、安装linux虚拟机
-
-​	1）、VMWare、VirtualBox（安装）；
-
-​	2）、导入虚拟机文件centos7-atguigu.ova；
-
-​	3）、双击启动linux虚拟机;使用  root/ 123456登陆
-
-​	4）、使用客户端连接linux服务器进行命令操作；
-
-​	5）、设置虚拟机网络；
-
-​		桥接网络===选好网卡====接入网线；
-
-​	6）、设置好网络以后使用命令重启虚拟机的网络
-
+#### 安装Docker
+- 安装linux虚拟机
+    + VMWare、VirtualBox（安装）；
+​	+ 导入虚拟机文件centos7-atguigu.ova；
+​	+ 双击启动linux虚拟机;使用  root/ 123456登陆
+​	+ 使用客户端连接linux服务器进行命令操作；
+​	+ 设置虚拟机网络: 桥接网络===选好网卡====接入网线；
+​	+ 设置好网络以后使用命令重启虚拟机的网络, service network restart
+​	+ 查看linux的ip地址
+​	+ 使用客户端连接linux；
+#### 在linux虚拟机上安装docker
 ```shell
-service network restart
-```
-
-​	7）、查看linux的ip地址
-
-```shell
-ip addr
-```
-
-​	8）、使用客户端连接linux；
-
-#### 2）、在linux虚拟机上安装docker
-
-步骤：
-
-```shell
-1、检查内核版本，必须是3.10及以上
+1. 检查内核版本，必须是3.10及以上
 uname -r
-2、安装docker
+2. 安装docker
 yum install docker
-3、输入y确认安装
-4、启动docker
+3. 输入y确认安装
+4. 启动docker
 [root@localhost ~]# systemctl start docker
 [root@localhost ~]# docker -v
 Docker version 1.12.6, build 3e8e77d/1.12.6
-5、开机启动docker
+5. 开机启动docker
 [root@localhost ~]# systemctl enable docker
 Created symlink from /etc/systemd/system/multi-user.target.wants/docker.service to /usr/lib/systemd/system/docker.service.
-6、停止docker
+6. 停止docker
 systemctl stop docker
 ```
 
-## 4、Docker常用命令&操作
-
-### 1）、镜像操作
+#### Docker常用命令&操作
+- 镜像操作
 
 | 操作 | 命令                                            | 说明                                                     |
 | ---- | ----------------------------------------------- | -------------------------------------------------------- |
@@ -2129,61 +2067,39 @@ systemctl stop docker
 | 列表 | docker images                                   | 查看所有本地镜像                                         |
 | 删除 | docker rmi image-id                             | 删除指定的本地镜像                                       |
 
-https://hub.docker.com/
-
-### 2）、容器操作
-
-软件镜像（QQ安装程序）----运行镜像----产生一个容器（正在运行的软件，运行的QQ）；
-
-步骤：
-
+#### 容器操作
 ````shell
-1、搜索镜像
+1. 搜索镜像
 [root@localhost ~]# docker search tomcat
-2、拉取镜像
+2. 拉取镜像
 [root@localhost ~]# docker pull tomcat
-3、根据镜像启动容器
+3. 根据镜像启动容器
 docker run --name mytomcat -d tomcat:latest
-4、docker ps  
+4. docker ps  
 查看运行中的容器
-5、 停止运行中的容器
+5. 停止运行中的容器
 docker stop  容器的id
-6、查看所有的容器
+6. 查看所有的容器
 docker ps -a
-7、启动容器
+7. 启动容器
 docker start 容器id
-8、删除一个容器
- docker rm 容器id
-9、启动一个做了端口映射的tomcat
+8. 删除一个容器
+docker rm 容器id
+9. 启动一个做了端口映射的tomcat
 [root@localhost ~]# docker run -d -p 8888:8080 tomcat
 -d：后台运行
 -p: 将主机的端口映射到容器的一个端口    主机端口:容器内部的端口
 
-10、为了演示简单关闭了linux的防火墙
+10. 为了演示简单关闭了linux的防火墙
 service firewalld status ；查看防火墙状态
 service firewalld stop：关闭防火墙
-11、查看容器的日志
+11. 查看容器的日志
 docker logs container-name/container-id
-
-更多命令参看
-https://docs.docker.com/engine/reference/commandline/docker/
-可以参考每一个镜像的文档
-
 ````
-
-
-
-### 3）、安装MySQL示例
-
+#### 安装MySQL示例
 ```shell
 docker pull mysql
-```
 
-
-
-错误的启动
-
-```shell
 [root@localhost ~]# docker run --name mysql01 -d mysql
 42f09819908bb72dd99ae19e792e0a5d03c48638421fa64cce5f8ba0f40f5846
 
@@ -2201,33 +2117,19 @@ c4f1ac60b3fc        tomcat              "catalina.sh run"        About an hour a
 [root@localhost ~]# docker logs 42f09819908b
 error: database is uninitialized and password option is not specified 
   You need to specify one of MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD and MYSQL_RANDOM_ROOT_PASSWORD；这个三个参数必须指定一个
-```
 
-正确的启动
-
-```shell
 [root@localhost ~]# docker run --name mysql01 -e MYSQL_ROOT_PASSWORD=123456 -d mysql
 b874c56bec49fb43024b3805ab51e9097da779f2f572c22c695305dedd684c5f
 [root@localhost ~]# docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS               NAMES
 b874c56bec49        mysql               "docker-entrypoint.sh"   4 seconds ago       Up 3 seconds        3306/tcp            mysql01
-```
 
-做了端口映射
-
-```shell
 [root@localhost ~]# docker run -p 3306:3306 --name mysql02 -e MYSQL_ROOT_PASSWORD=123456 -d mysql
 ad10e4bc5c6a0f61cbad43898de71d366117d120e39db651844c0e73863b9434
 [root@localhost ~]# docker ps
 CONTAINER ID        IMAGE               COMMAND                  CREATED             STATUS              PORTS                    NAMES
 ad10e4bc5c6a        mysql               "docker-entrypoint.sh"   4 seconds ago       Up 2 seconds        0.0.0.0:3306->3306/tcp   mysql02
-```
 
-
-
-几个其他的高级操作
-
-```
 docker run --name mysql03 -v /conf/mysql:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag
 把主机的/conf/mysql文件夹挂载到 mysqldocker容器的/etc/mysql/conf.d文件夹里面
 改mysql的配置文件就只需要把mysql配置文件放在自定义的文件夹下（/conf/mysql）
@@ -2238,10 +2140,8 @@ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag --
 
 
 
-# 六、SpringBoot与数据访问
-
-## 1、JDBC
-
+## 20. SpringBoot与数据访问
+#### JDBC
 ```xml
 <dependency>
 			<groupId>org.springframework.boot</groupId>
