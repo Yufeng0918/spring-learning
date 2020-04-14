@@ -2372,8 +2372,8 @@ public class SpringApplication {
             + 创建嵌入式WebContainer 并启动
         + afterRefresh()
             + 回调IOC容器中获取所有 ApplicationRunner 和 CommandLineRunner 的run()
-        + finished()
-            + 回调SpringApplicationRunListener.finish(context);
+        + started()
+            + 回调SpringApplicationRunListener.started(context);
         + 返回IOC容器
 ```java
 public class SpringApplication {

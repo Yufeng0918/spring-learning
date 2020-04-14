@@ -34,7 +34,7 @@ public class HelloSpringApplicationRunListener implements SpringApplicationRunLi
     }
 
     @Override
-    public void finished(ConfigurableApplicationContext context, Throwable exception) {
-        System.out.println("SpringApplicationRunListener...finished...");
+    public void started(ConfigurableApplicationContext context) {
+        System.out.println("SpringApplicationRunListener...started...");
     }
 }
