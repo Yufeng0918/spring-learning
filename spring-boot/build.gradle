@@ -48,8 +48,14 @@ subprojects {
     ext {
         springBootVersion = "2.2.6.RELEASE"
     }
+
+//    configurations {
+//        compile.exclude module: "spring-boot-starter-tomcat"
+//    }
+
     dependencies {
-        compile "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
+        compile ("org.springframework.boot:spring-boot-starter-web:$springBootVersion")
+        implementation "org.springframework.boot:spring-boot-starter-jetty"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
         testCompile "junit:junit:4.12"
         testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
