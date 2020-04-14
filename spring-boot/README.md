@@ -2137,8 +2137,7 @@ docker run --name mysql03 -v /conf/mysql:/etc/mysql/conf.d -e MYSQL_ROOT_PASSWOR
 docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 指定mysql的一些配置参数
 ```
-
-
+***
 
 ## 20. SpringBoot与数据访问
 #### JDBC
@@ -2233,8 +2232,7 @@ public class DruidConfig {
 
 ```
 
-## 3、整合MyBatis
-
+## 21. 整合MyBatis
 ```xml
 		<dependency>
 			<groupId>org.mybatis.spring.boot</groupId>
@@ -2242,21 +2240,9 @@ public class DruidConfig {
 			<version>1.3.1</version>
 		</dependency>
 ```
-
 ![](images/搜狗截图20180305194443.png)
-
-步骤：
-
-​	1）、配置数据源相关属性（见上一节Druid）
-
-​	2）、给数据库建表
-
-​	3）、创建JavaBean
-
-### 	4）、注解版
-
+#### 注解版
 ```java
-//指定这是一个操作数据库的mapper
 @Mapper
 public interface DepartmentMapper {
 
@@ -2274,11 +2260,7 @@ public interface DepartmentMapper {
     public int updateDept(Department department);
 }
 ```
-
-问题：
-
-自定义MyBatis的配置规则；给容器中添加一个ConfigurationCustomizer；
-
+- 自定义MyBatis的配置规则；给容器中添加一个ConfigurationCustomizer；
 ```java
 @org.springframework.context.annotation.Configuration
 public class MyBatisConfig {
@@ -2295,11 +2277,8 @@ public class MyBatisConfig {
     }
 }
 ```
-
-
-
+- 使用MapperScan批量扫描所有的Mapper接口
 ```java
-使用MapperScan批量扫描所有的Mapper接口；
 @MapperScan(value = "com.bp.springboot.mapper")
 @SpringBootApplication
 public class SpringBoot06DataMybatisApplication {
