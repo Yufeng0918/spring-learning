@@ -1611,72 +1611,41 @@ public class MyErrorAttributes extends DefaultErrorAttributes {
 }
 ```
 ![](images/搜狗截图20180228135513.png)
+***
 
-
-
-## 8、配置嵌入式Servlet容器
-
+## 18. 配置嵌入式Servlet容器
 SpringBoot默认使用Tomcat作为嵌入式的Servlet容器；
-
 ![](images/搜狗截图20180301142915.png)
-
-
-
-问题？
-
-### 1）、如何定制和修改Servlet容器的相关配置；
-
-1、修改和server有关的配置（ServerProperties【也是EmbeddedServletContainerCustomizer】）；
-
+#### 如何定制和修改Servlet容器的相关配置；
+- 修改和server有关的配置（ServerProperties, EmbeddedServletContainerCustomizer）；
 ```properties
 server.port=8081
 server.context-path=/crud
-
 server.tomcat.uri-encoding=UTF-8
-
-//通用的Servlet容器设置
-server.xxx
-//Tomcat的设置
-server.tomcat.xxx
 ```
-
-2、编写一个**EmbeddedServletContainerCustomizer**：嵌入式的Servlet容器的定制器；来修改Servlet容器的配置
-
+- 编写 WebServerFactoryCustomizer 嵌入式的Servlet容器的定制器；来修改Servlet容器的配置
 ```java
 @Bean  //一定要将这个定制器加入到容器中
-public EmbeddedServletContainerCustomizer embeddedServletContainerCustomizer(){
-    return new EmbeddedServletContainerCustomizer() {
-
-        //定制嵌入式的Servlet容器相关的规则
+public WebServerFactoryCustomizer webServerFactoryCustomizer() {
+    return new WebServerFactoryCustomizer<ConfigurableServletWebServerFactory>() {
         @Override
-        public void customize(ConfigurableEmbeddedServletContainer container) {
-            container.setPort(8083);
+        public void customize(ConfigurableServletWebServerFactory factory) {
+            factory.setPort(8090);
         }
     };
 }
 ```
-
-### 2）、注册Servlet三大组件【Servlet、Filter、Listener】
-
-由于SpringBoot默认是以jar包的方式启动嵌入式的Servlet容器来启动SpringBoot的web应用，没有web.xml文件。
-
-注册三大组件用以下方式
-
-ServletRegistrationBean
+#### 注册Servlet三大组件Servlet, Filter, Listener
+- 由于SpringBoot默认是以jar包的方式启动嵌入式的Servlet容器来启动SpringBoot的web应用，没有web.xml文件
+- ServletRegistrationBean, FilterRegistrationBean, ServletListenerRegistrationBean
 
 ```java
-//注册三大组件
 @Bean
 public ServletRegistrationBean myServlet(){
     ServletRegistrationBean registrationBean = new ServletRegistrationBean(new MyServlet(),"/myServlet");
     return registrationBean;
 }
 
-```
-
-FilterRegistrationBean
-
-```java
 @Bean
 public FilterRegistrationBean myFilter(){
     FilterRegistrationBean registrationBean = new FilterRegistrationBean();
@@ -1684,9 +1653,6 @@ public FilterRegistrationBean myFilter(){
     registrationBean.setUrlPatterns(Arrays.asList("/hello","/myServlet"));
     return registrationBean;
 }
-```
-
-ServletListenerRegistrationBean
 
 ```java
 @Bean

@@ -2,7 +2,10 @@ package com.bp.springboot.config;
 
 import com.bp.springboot.component.MyLocaleResolver;
 import com.bp.springboot.controller.LoginHandlerInterceptor;
+import org.springframework.boot.web.server.WebServerFactory;
+import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.context.annotation.Bean;
@@ -42,7 +45,7 @@ public class MyMvcConfig implements WebMvcConfigurer {
             @Override
             public void addInterceptors(InterceptorRegistry registry) {
                 registry.addInterceptor(new LoginHandlerInterceptor()).addPathPatterns("/**").
-                    excludePathPatterns("/index.html", "/", "/user/login", "/hello", "/success", "/error", "/webjars/**", "/asserts/**", "/favicon.ico");
+                    excludePathPatterns("/index.html", "/", "/user/login", "/hello", "/success", "/error", "/webjars/**", "/asserts/**", "/favicon.ico", "/myServlet");
             }
         };
     }
@@ -58,4 +61,6 @@ public class MyMvcConfig implements WebMvcConfigurer {
         filterRegistrationBean.setUrlPatterns(Arrays.asList("/*"));
         return filterRegistrationBean;
     }
+
+
 }
