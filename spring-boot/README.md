@@ -2144,92 +2144,59 @@ docker run --name some-mysql -e MYSQL_ROOT_PASSWORD=my-secret-pw -d mysql:tag --
 #### JDBC
 ```xml
 <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-jdbc</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-jdbc</artifactId>
+</dependency>
+<dependency>
+    <groupId>mysql</groupId>
+    <artifactId>mysql-connector-java</artifactId>
+    <scope>runtime</scope>
+</dependency>
 ```
-
-
-
 ```yaml
 spring:
   datasource:
     username: root
-    password: 123456
-    url: jdbc:mysql://192.168.15.22:3306/jdbc
-    driver-class-name: com.mysql.jdbc.Driver
+    password: ${password}
+    url: jdbc:mysql://127.0.0.1/jdbc?serverTimeZone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
 ```
-
-效果：
-
-​	默认是用org.apache.tomcat.jdbc.pool.DataSource作为数据源；
-
-​	数据源的相关配置都在DataSourceProperties里面；
-
-自动配置原理：
-
-org.springframework.boot.autoconfigure.jdbc：
-
-1、参考DataSourceConfiguration，根据配置创建数据源，默认使用Tomcat连接池；可以使用spring.datasource.type指定自定义的数据源类型；
-
-2、SpringBoot默认可以支持；
-
-```
-org.apache.tomcat.jdbc.pool.DataSource、HikariDataSource、BasicDataSource、
-```
-
-3、自定义数据源类型
-
+- 默认是用org.apache.tomcat.jdbc.pool.DataSource作为数据源；
+- 数据源的相关配置都在DataSourceProperties里面；
+- 自动配置原理：
+    + DataSourceConfiguration，根据配置创建数据源, 可以使用spring.datasource.type指定自定义的数据源类型；
+    + SpringBoot默认可以支持: org.apache.tomcat.jdbc.pool.DataSource, HikariDataSource, BasicDataSource
+- 自定义数据源类型
 ```java
-/**
- * Generic DataSource configuration.
- */
 @ConditionalOnMissingBean(DataSource.class)
 @ConditionalOnProperty(name = "spring.datasource.type")
 static class Generic {
 
    @Bean
    public DataSource dataSource(DataSourceProperties properties) {
-       //使用DataSourceBuilder创建数据源，利用反射创建响应type的数据源，并且绑定相关属性
       return properties.initializeDataSourceBuilder().build();
    }
 
 }
 ```
-
-4、**DataSourceInitializer：ApplicationListener**；
-
-​	作用：
-
-​		1）、runSchemaScripts();运行建表语句；
-
-​		2）、runDataScripts();运行插入数据的sql语句；
-
-默认只需要将文件命名为：
-
-```properties
-schema-*.sql、data-*.sql
-默认规则：schema.sql，schema-all.sql；
-可以使用   
-	schema:
-      - classpath:department.sql
-      指定位置
+- DataSourceInitializer is ApplicationListener
+   + runSchemaScripts();运行建表语句, schema-*.sql 或则用 spring.datasource.schema 在application.yml指定
+   + runDataScripts();运行插入数据的sql语句, data-*.sql
+```yaml
+initialization-mode: always
+schema:
+  - classpath:department.sql
 ```
-
-5、操作数据库：自动配置了JdbcTemplate操作数据库
-
-## 2、整合Druid数据源
-
+- 操作数据库：自动配置了JdbcTemplate操作数据库
+#### 整合Druid数据源
+- 配置一个管理后台的Servlet
+- 配置一个web监控的filter
+- 添加 log4j:log4j:1.2.17
 ```java
-导入druid数据源
 @Configuration
 public class DruidConfig {
-
+    
+    //绑定属性
     @ConfigurationProperties(prefix = "spring.datasource")
     @Bean
     public DataSource druid(){
@@ -2237,23 +2204,20 @@ public class DruidConfig {
     }
 
     //配置Druid的监控
-    //1、配置一个管理后台的Servlet
     @Bean
     public ServletRegistrationBean statViewServlet(){
         ServletRegistrationBean bean = new ServletRegistrationBean(new StatViewServlet(), "/druid/*");
         Map<String,String> initParams = new HashMap<>();
-
         initParams.put("loginUsername","admin");
-        initParams.put("loginPassword","123456");
+        initParams.put("loginPassword","admin");
         initParams.put("allow","");//默认就是允许所有访问
         initParams.put("deny","192.168.15.21");
-
         bean.setInitParameters(initParams);
         return bean;
     }
 
 
-    //2、配置一个web监控的filter
+    //配置一个web监控的filter
     @Bean
     public FilterRegistrationBean webStatFilter(){
         FilterRegistrationBean bean = new FilterRegistrationBean();
@@ -2261,11 +2225,8 @@ public class DruidConfig {
 
         Map<String,String> initParams = new HashMap<>();
         initParams.put("exclusions","*.js,*.css,/druid/*");
-
         bean.setInitParameters(initParams);
-
         bean.setUrlPatterns(Arrays.asList("/*"));
-
         return  bean;
     }
 }
