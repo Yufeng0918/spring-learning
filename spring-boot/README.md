@@ -2288,73 +2288,42 @@ public class SpringBoot06DataMybatisApplication {
 	}
 }
 ```
+***
 
-### 5）、配置文件版
-
-```yaml
-mybatis:
-  config-location: classpath:mybatis/mybatis-config.xml 指定全局配置文件的位置
-  mapper-locations: classpath:mybatis/mapper/*.xml  指定sql映射文件的位置
-```
-
-更多使用参照
-
-http://www.mybatis.org/spring-boot-starter/mybatis-spring-boot-autoconfigure/
-
-
-
-## 4、整合SpringData JPA
-
-### 1）、SpringData简介
-
+## 22. 整合SpringData JPA
+#### SpringData简介
 ![](images/搜狗截图20180306105412.png)
-
-### 2）、整合SpringData JPA
-
-JPA:ORM（Object Relational Mapping）；
-
-1）、编写一个实体类（bean）和数据表进行映射，并且配置好映射关系；
-
+#### 整合SpringData JPA
+- JPA:ORM（Object Relational Mapping）；
+- 编写一个实体类（bean）和数据表进行映射，并且配置好映射关系；
 ```java
-//使用JPA注解配置映射关系
-@Entity //告诉JPA这是一个实体类（和数据表映射的类）
-@Table(name = "tbl_user") //@Table来指定和哪个数据表对应;如果省略默认表名就是user；
+@Entity
+@Table(name = "tbl_user")
 public class User {
 
-    @Id //这是一个主键
-    @GeneratedValue(strategy = GenerationType.IDENTITY)//自增主键
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "last_name",length = 50) //这是和数据表对应的一个列
+    @Column(name = "last_name",length = 50)
     private String lastName;
-    @Column //省略默认列名就是属性名
-    private String email;
-```
-
-2）、编写一个Dao接口来操作实体类对应的数据表（Repository）
-
-```java
-//继承JpaRepository来完成对数据库的操作
-public interface UserRepository extends JpaRepository<User,Integer> {
 }
-
 ```
-
-3）、基本的配置JpaProperties
-
+- 编写一个Dao接口来操作实体类对应的数据表（Repository）
+```java
+public interface UserRepository extends JpaRepository<User,Integer> {}
+```
+- 基本的配置JpaProperties
 ```yaml
-spring:  
- jpa:
+spring:
+  jpa:
     hibernate:
-#     更新或者创建数据表结构
       ddl-auto: update
-#    控制台显示SQL
     show-sql: true
 ```
+***
 
-
-
-# 七、启动配置原理
+## 23. 启动配置原理
 
 几个重要的事件回调机制
 

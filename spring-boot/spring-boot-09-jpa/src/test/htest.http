@@ -1,0 +1,9 @@
+GET http://localhost:8080/user?lastName=AAA&email=a@gmail.com
+Accept: application/json
+
+###
+
+GET http://localhost:8080/user/1
+Accept: application/json
+
+###

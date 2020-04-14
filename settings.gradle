@@ -17,4 +17,6 @@ include 'spring-boot:spring-boot-07-jdbc'
 findProject(':spring-boot:spring-boot-07-jdbc')?.name = 'spring-boot-07-jdbc'
 include 'spring-boot:spring-boot-08-mybatis'
 findProject(':spring-boot:spring-boot-08-mybatis')?.name = 'spring-boot-08-mybatis'
+include 'spring-boot:spring-boot-09-jpa'
+findProject(':spring-boot:spring-boot-09-jpa')?.name = 'spring-boot-09-jpa'
 
