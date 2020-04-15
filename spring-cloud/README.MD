@@ -219,3 +219,23 @@ public class PaymentController {
 @EnableDiscoveryClient
 public class PaymentMain8001 { }
 ```
+- self protection
+    + if some service is unavailable, eureka will will keep in info, AP
+    + configure in server and client
+```yaml
+eureka:
+  server:
+    # disable self-preservation
+    enable-self-preservation: false
+    eviction-interval-timer-in-ms: 2000
+```
+```yaml
+eureka:
+  instance:
+    instance-id: payment8001
+    prefer-ip-address: true
+    # heat beat period (default is 30)
+    lease-renewal-interval-in-seconds: 5
+    # expiration after last success heart beat
+    lease-expiration-duration-in-seconds: 10
+```
