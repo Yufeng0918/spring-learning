@@ -31,5 +31,5 @@ spring:
       - classpath:sql/payment.sql
 
 mybatis:
-  mapper-locations: classpth:mapper/*.xml
+  mapper-locations: classpath:mapper/*.xml
   type-aliases-package: com.bp.springcloud.entities

@@ -13,7 +13,7 @@
         <id column="serial" property="serial" jdbcType="VARCHAR" />
     </resultMap>
 
-    <select id="getPaymentById" parameterType="Long" resultType="BaseResultMap">
+    <select id="getPaymentById" parameterType="Long" resultMap="BaseResultMap">
         SELECT * FROM payment WHERE id=#{id}
     </select>
 </mapper>

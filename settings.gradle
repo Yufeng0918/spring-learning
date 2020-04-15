@@ -28,4 +28,8 @@ findProject(':spring-boot:spring-boot-11-starter-autoconfig')?.name = 'spring-bo
 include 'spring-cloud'
 include 'spring-cloud:cloud-provider-payment8001'
 findProject(':spring-cloud:cloud-provider-payment8001')?.name = 'cloud-provider-payment8001'
+include 'spring-cloud:cloud-consumer-order80'
+findProject(':spring-cloud:cloud-consumer-order80')?.name = 'cloud-consumer-order80'
+include 'spring-cloud:cloud-api-common'
+findProject(':spring-cloud:cloud-api-common')?.name = 'cloud-api-common'
 
