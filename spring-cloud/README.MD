@@ -94,3 +94,78 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 ```
+
+
+## 5. Service Registration
+#### Eureka
+- client-server architecture with heart beat
+- service provider cluster register to eureka server cluster
+- service consumer get registry from eureka server cluster
+- eureka server: provide registration service
+- eureka client: register service, heart beat period is 30s, de-register client if no heart beat
+- server
+    + configuration in buidl.gradle and application.yml
+    + enable in main application
+```groovy
+implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-server:2.2.1.RELEASE"
+```
+```yaml
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    # do not register self
+    register-with-eureka: false
+    # declare as register
+    fetch-registry: false
+    # url to qurey to lookup service
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka
+```
+```java
+@EnableEurekaServer
+public class EurekaMain7001 { }
+```
+- client
+    + configuration, spring.application.name is service in registry
+    + enable in main application
+```groovy
+implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.2.1.RELEASE"
+```
+```yaml
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:7001/eureka
+```
+```java
+@EnableEurekaClient
+public class PaymentMain8001 { }
+```
+- cluster
+    + eureka server register with each other
+    + eureka client register to multiple eureka server
+```yaml
+eureka:
+  instance:
+    hostname: eureka7001.com
+  client:
+    service-url:
+      defaultZone: http://eureka7002.com:7002/eureka
+```
+```yaml
+eureka:
+  instance:
+    hostname: eureka7002.com
+  client:
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka
+```
+```yaml
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+```

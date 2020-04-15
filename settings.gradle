@@ -32,4 +32,8 @@ include 'spring-cloud:cloud-consumer-order80'
 findProject(':spring-cloud:cloud-consumer-order80')?.name = 'cloud-consumer-order80'
 include 'spring-cloud:cloud-api-common'
 findProject(':spring-cloud:cloud-api-common')?.name = 'cloud-api-common'
+include 'spring-cloud:cloud-eureka-server7001'
+findProject(':spring-cloud:cloud-eureka-server7001')?.name = 'cloud-eureka-server7001'
+include 'spring-cloud:cloud-eureka-server7002'
+findProject(':spring-cloud:cloud-eureka-server7002')?.name = 'cloud-eureka-server7002'
 

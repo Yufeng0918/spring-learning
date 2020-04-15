@@ -49,10 +49,10 @@ subprojects {
         implementation "org.springframework.boot:spring-boot-starter-web:$springBootVersion"
         implementation "org.springframework.boot:spring-boot-starter-actuator:$springBootVersion"
         implementation "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
-        implementation "org.springframework.boot:spring-boot-devtools:$springBootVersion"
         implementation "org.springframework.cloud:spring-cloud-dependencies:$springCloudVersion"
         implementation "com.alibaba.cloud:spring-cloud-alibaba-dependencies:$springCloudAlibabaVersion"
         annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+        compileOnly "org.springframework.boot:spring-boot-devtools:$springBootVersion"
         testCompile "junit:junit:4.12"
         testCompile "org.springframework.boot:spring-boot-starter-test:$springBootVersion"
         compileOnly 'org.projectlombok:lombok'
