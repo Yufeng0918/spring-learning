@@ -189,3 +189,33 @@ public class OrderController {
     }
 }
 ```
+- configure host and ip
+```yaml
+eureka:
+    instance:
+        instance-id: payment8001
+        prefer-ip-address: true
+```
+- enable discovery client and discovery client get service info from eureka server
+```java
+@RestController
+@Slf4j
+public class PaymentController {
+
+    @Resource
+    private DiscoveryClient discoveryClient;
+
+    @GetMapping(value = "/payment/discovery")
+    public Object discovery() {
+        List<String> serviceList = discoveryClient.getServices();
+        serviceList.forEach(s -> log.info("service: " + s));
+
+        List<ServiceInstance> instanceList = discoveryClient.getInstances("CLOUD-PAYMENT-SERVICE");
+        instanceList.forEach(i -> log.info(i.getServiceId() + "\t" + i.getHost() + "\t" + i.getPort() + "\t" + i.getUri()));
+        return this.discoveryClient;
+    }
+}
+
+@EnableDiscoveryClient
+public class PaymentMain8001 { }
+```
