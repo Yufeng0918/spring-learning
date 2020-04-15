@@ -147,6 +147,8 @@ public class PaymentMain8001 { }
 - cluster
     + eureka server register with each other
     + eureka client register to multiple eureka server
+        + enable @LoadBalanced for RestTemplate
+        + change the hostname to service name
 ```yaml
 eureka:
   instance:
@@ -168,4 +170,22 @@ eureka:
   client:
     service-url:
       defaultZone: http://eureka7001.com:7001/eureka,http://eureka7002.com:7002/eureka
+```
+```java
+@Configuration
+public class ApplicationContextConfig {
+    @Bean
+    @LoadBalanced
+    public RestTemplate getRestTemplate() {
+        return new RestTemplate();
+    }
+}
+public class OrderController {
+
+    public static final String PAYMENT_URL = "http://CLOUD-PAYMENT-SERVICE";
+    @GetMapping("/consumer/payment/create")
+    public CommonResult<Payment> create(Payment payment) {
+        return restTemplate.postForObject(PAYMENT_URL + "/payment/create", payment, CommonResult.class);
+    }
+}
 ```

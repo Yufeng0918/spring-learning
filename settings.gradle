@@ -36,4 +36,6 @@ include 'spring-cloud:cloud-eureka-server7001'
 findProject(':spring-cloud:cloud-eureka-server7001')?.name = 'cloud-eureka-server7001'
 include 'spring-cloud:cloud-eureka-server7002'
 findProject(':spring-cloud:cloud-eureka-server7002')?.name = 'cloud-eureka-server7002'
+include 'spring-cloud:cloud-provider-payment8002'
+findProject(':spring-cloud:cloud-provider-payment8002')?.name = 'cloud-provider-payment8002'
 
