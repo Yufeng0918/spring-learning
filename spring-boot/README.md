@@ -2184,7 +2184,7 @@ static class Generic {
 ```yaml
 initialization-mode: always
 schema:
-  - classpath:department.sql
+  - classpath:payment.sql
 ```
 - 操作数据库：自动配置了JdbcTemplate操作数据库
 #### 整合Druid数据源

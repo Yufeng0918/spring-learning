@@ -25,4 +25,7 @@ include 'spring-boot:spring-boot-11-starter'
 findProject(':spring-boot:spring-boot-11-starter')?.name = 'spring-boot-11-starter'
 include 'spring-boot:spring-boot-11-starter-autoconfig'
 findProject(':spring-boot:spring-boot-11-starter-autoconfig')?.name = 'spring-boot-11-starter-autoconfig'
+include 'spring-cloud'
+include 'spring-cloud:cloud-provider-payment8001'
+findProject(':spring-cloud:cloud-provider-payment8001')?.name = 'cloud-provider-payment8001'
 
