@@ -32,3 +32,9 @@ GET http://localhost:8004/payment/zk
 Accept: application/json
 
 ###
+
+
+GET http://localhost:80/consumer/paymentzk
+Accept: application/json
+
+###

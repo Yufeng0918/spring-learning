@@ -241,6 +241,7 @@ eureka:
 ```
 #### Zookeeper
 - start zookeeper: ./zkServer.sh start
+- CP, temp node
 - configure build.gradle
 ```
 dependencies {
