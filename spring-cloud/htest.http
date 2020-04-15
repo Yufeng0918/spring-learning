@@ -18,6 +18,10 @@ Accept: application/json
 
 ###
 
+GET http://localhost:80/consumer/payment/getForEntity/6
+Accept: application/json
+
+###
 
 GET http://localhost:80/consumer/payment/create?serial=NY002
 Content-Type: application/json
@@ -35,6 +39,16 @@ Accept: application/json
 
 
 GET http://localhost:80/consumer/paymentzk
+Accept: application/json
+
+###
+
+GET http://localhost:8006/payment/consul
+Accept: application/json
+
+###
+
+GET http://localhost:80/consumer/paymentconsul
 Accept: application/json
 
 ###

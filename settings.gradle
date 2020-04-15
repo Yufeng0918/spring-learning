@@ -42,4 +42,8 @@ include 'spring-cloud:cloud-provider-payment8004'
 findProject(':spring-cloud:cloud-provider-payment8004')?.name = 'cloud-provider-payment8004'
 include 'spring-cloud:cloud-consumerzk-order80'
 findProject(':spring-cloud:cloud-consumerzk-order80')?.name = 'cloud-consumerzk-order80'
+include 'spring-cloud:cloud-providerconsul-payment8006'
+findProject(':spring-cloud:cloud-providerconsul-payment8006')?.name = 'cloud-providerconsul-payment8006'
+include 'spring-cloud:cloud-consumerconsul-order80'
+findProject(':spring-cloud:cloud-consumerconsul-order80')?.name = 'cloud-consumerconsul-order80'
 

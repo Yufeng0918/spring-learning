@@ -96,7 +96,7 @@ dependencies {
 ```
 
 
-## 5. Service Registration
+## 5. Service Discovery
 #### Eureka
 - client-server architecture with heart beat
 - service provider cluster register to eureka server cluster
@@ -254,7 +254,51 @@ dependencies {
 [zk: localhost:2181(CONNECTED) 9] get /services/cloud-payment-service/ee014310-2356-4f46-b538-8bc113310b1e
 {"name":"cloud-payment-service","id":"ee014310-2356-4f46-b538-8bc113310b1e","address":"192.168.1.102","port":8004,"sslPort":null,"payload":{"@class":"org.springframework.cloud.zookeeper.discovery.ZookeeperInstance","id":"application-1","name":"cloud-payment-service","metadata":{}},"registrationTimeUTC":1586946162725,"serviceType":"DYNAMIC","uriSpec":{"parts":[{"value":"scheme","variable":true},{"value":"://","variable":false},{"value":"address","variable":true},{"value":":","variable":false},{"value":"port","variable":true}]}}
 ```
+```yaml
+spring:
+  application:
+    name: cloud-payment-service
+  cloud:
+    zookeeper:
+      connect-string: 127.0.0.1:2181
+```
 #### Consul
 - service mesh solution providing a full featured control plane with service discovery
 - HashiCorp develop via Golang
-- could be service discovery, config centre, bus
+- could be service discovery, config centre, bus, web monitor
+- run: ./consul agent -dev
+- admin: http://localhost:8500/ui/dc1/services
+```groovy
+dependencies {
+    compile 'org.springframework.cloud:spring-cloud-starter-consul-discovery:2.2.1.RELEASE'
+}
+```
+```yaml
+spring:
+  application:
+    name: consul-provider-payment
+  cloud:
+    consul:
+      discovery:
+        service-name: ${spring.application.name}
+      port: 8500
+      host: localhost
+```
+#### Eureka vs Zookeeper vs Consul
+- Eureka: AP, java
+- Consul: CP, go
+- Zookeeper: CP, java
+- Consistency, Availability, Partition tolerance
+***
+
+## 6. Ribbon
+- client load balancing
+- configuration timeout, retry
+- maintenance mode, going to be replace by spring cloud loadbalancer
+- local load balancer, get service from registry and cache in local
+- balance policy: random, run rubin, weighted
+- eureka-client integrate with ribbon
+#### RestTemplate
+- getForObject/getForEntity, postForObject/postForEntity
+- Object: json
+- Entity: @ResponseEntity contains body, header, status code
