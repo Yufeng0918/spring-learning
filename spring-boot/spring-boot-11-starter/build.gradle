@@ -1,0 +1,16 @@
+plugins {
+    id 'java'
+}
+
+group 'com.bp'
+version '1.0'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+dependencies {
+    compile "com.bp:spring-boot-11-starter-autoconfig:1.0"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}

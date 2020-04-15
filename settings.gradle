@@ -21,4 +21,8 @@ include 'spring-boot:spring-boot-09-jpa'
 findProject(':spring-boot:spring-boot-09-jpa')?.name = 'spring-boot-09-jpa'
 include 'spring-boot:spring-boot-10-listener'
 findProject(':spring-boot:spring-boot-10-listener')?.name = 'spring-boot-10-listener'
+include 'spring-boot:spring-boot-11-starter'
+findProject(':spring-boot:spring-boot-11-starter')?.name = 'spring-boot-11-starter'
+include 'spring-boot:spring-boot-11-starter-autoconfig'
+findProject(':spring-boot:spring-boot-11-starter-autoconfig')?.name = 'spring-boot-11-starter-autoconfig'
 

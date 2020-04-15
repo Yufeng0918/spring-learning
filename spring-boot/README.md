@@ -2497,72 +2497,27 @@ public class HelloCommandLineRunner implements CommandLineRunner {
 
 
 ## 25 自定义starter
-
-starter：
-
-​	1、这个场景需要使用到的依赖是什么？
-
-​	2、如何编写自动配置
-
+#### starter
+- 自动配置类要能加载
 ```java
-@Configuration  //指定这个类是一个配置类
-@ConditionalOnXXX  //在指定条件成立的情况下自动配置类生效
-@AutoConfigureAfter  //指定自动配置类的顺序
-@Bean  //给容器中添加组件
-
-@ConfigurationPropertie结合相关xxxProperties类来绑定相关的配置
-@EnableConfigurationProperties //让xxxProperties生效加入到容器中
-
-自动配置类要能加载
-将需要启动就加载的自动配置类，配置在META-INF/spring.factories
+//指定这个类是一个配置类
+@Configuration
+//在指定条件成立的情况下自动配置类生效  
+@ConditionalOn(...)
+//指定自动配置类的顺序  
+@AutoConfigureAfter  
+//结合相关Properties类来绑定相关的配置
+@ConfigurationPropertie
+//让Properties生效加入到容器中
+@EnableConfigurationProperties 
+```
+- 将需要启动就加载的自动配置类，配置在META-INF/spring.factories
+```
 org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
 org.springframework.boot.autoconfigure.admin.SpringApplicationAdminJmxAutoConfiguration,\
 org.springframework.boot.autoconfigure.aop.AopAutoConfiguration,\
 ```
-
-​	3、模式：
-
-启动器只用来做依赖导入；
-
-专门来写一个自动配置模块；
-
-启动器依赖自动配置；别人只需要引入启动器（starter）
-
-mybatis-spring-boot-starter；自定义启动器名-spring-boot-starter
-
-
-
-步骤：
-
-1）、启动器模块
-
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.bp.starter</groupId>
-    <artifactId>atguigu-spring-boot-starter</artifactId>
-    <version>1.0-SNAPSHOT</version>
-
-    <!--启动器-->
-    <dependencies>
-
-        <!--引入自动配置模块-->
-        <dependency>
-            <groupId>com.bp.starter</groupId>
-            <artifactId>atguigu-spring-boot-starter-autoconfigurer</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-    </dependencies>
-
-</project>
-```
-
-2）、自动配置模块
-
+- 自动配置模块
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -2591,28 +2546,18 @@ mybatis-spring-boot-starter；自定义启动器名-spring-boot-starter
    </properties>
 
    <dependencies>
-
       <!--引入spring-boot-starter；所有starter的基本配置-->
       <dependency>
          <groupId>org.springframework.boot</groupId>
          <artifactId>spring-boot-starter</artifactId>
       </dependency>
-
    </dependencies>
-
-
-
 </project>
-
 ```
-
-
-
+- 启动器只用来做依赖导入；
+- 专门来写一个自动配置模块；
+- 启动器依赖自动配置；别人只需要引入启动器
 ```java
-package com.bp.starter;
-
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
 @ConfigurationProperties(prefix = "atguigu.hello")
 public class HelloProperties {
 
@@ -2636,10 +2581,6 @@ public class HelloProperties {
     }
 }
 
-```
-
-```java
-package com.bp.starter;
 
 public class HelloService {
 
@@ -2658,19 +2599,8 @@ public class HelloService {
     }
 }
 
-```
-
-```java
-package com.bp.starter;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-
 @Configuration
-@ConditionalOnWebApplication //web应用才生效
+@ConditionalOnWebApplication
 @EnableConfigurationProperties(HelloProperties.class)
 public class HelloServiceAutoConfiguration {
 
@@ -2683,9 +2613,25 @@ public class HelloServiceAutoConfiguration {
         return service;
     }
 }
-
 ```
+- 启动器模块
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
 
-# 更多SpringBoot整合示例
+    <groupId>com.bp.starter</groupId>
+    <artifactId>atguigu-spring-boot-starter</artifactId>
+    <version>1.0-SNAPSHOT</version>
 
-https://github.com/spring-projects/spring-boot/tree/master/spring-boot-samples
+    <dependencies>
+        <dependency>
+            <groupId>com.bp.starter</groupId>
+            <artifactId>atguigu-spring-boot-starter-autoconfigurer</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+</project>
+```

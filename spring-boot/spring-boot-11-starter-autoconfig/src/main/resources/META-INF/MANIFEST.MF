@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Implementation-Title: bp starter auto config
+Automatic-Module-Name: com.bp.starter
+Implementation-Version: 1.0.RELEASE
+Built-By: DY
+Build-Jdk-Spec: 1.8
+Created-By: Maven Archiver 3.4.0
