@@ -341,3 +341,45 @@ public class MyRule{
 @RibbonClient(name = "CLOUD-PAYMENT-SERVICE", configuration = MyRule.class)
 public class OrderMain80 { }
 ```
+***
+
+## 7. OpenFeign
+- declarative web service client
+- underlying implementation is ribbon
+- import libraries
+```groovy
+dependencies {
+    implementation "org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:2.2.1.RELEASE"
+    implementation "com.bp:cloud-api-common:1.0"
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+```
+- enable feign
+```java
+@EnableFeignClients
+public class OrderFeignMain80 { }
+```
+- declare feign client and invoke feign client
+```
+@Component
+@FeignClient("CLOUD-PAYMENT-SERVICE")
+public interface PaymentFeignService {
+    @GetMapping(value = "/payment/get/{id}")
+    public CommonResult<Payment> getPaymentById(@PathVariable("id") Long id);
+}
+
+
+@RestController
+@Slf4j
+public class OrderFeignController {
+
+    @Resource
+    private PaymentFeignService paymentFeignService;
+
+    @GetMapping(value = "/consumer/payment/get/{id}")
+    public CommonResult<Payment> getPaymentById(@PathVariable("id") Long id) {
+        return paymentFeignService.getPaymentById(id);
+    }
+}
+
+```
