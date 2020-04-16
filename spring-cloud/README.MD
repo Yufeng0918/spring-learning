@@ -296,9 +296,48 @@ spring:
 - configuration timeout, retry
 - maintenance mode, going to be replace by spring cloud loadbalancer
 - local load balancer, get service from registry and cache in local
-- balance policy: random, run rubin, weighted
 - eureka-client integrate with ribbon
 #### RestTemplate
 - getForObject/getForEntity, postForObject/postForEntity
 - Object: json
 - Entity: @ResponseEntity contains body, header, status code
+#### Routing Policy
+- RoundRobin: default
+    + index of request % number of active server
+    + nextServerCyclicCounter is index of request
+    + allServers is number of active servers
+    + operation: Atomic get value, newValue = (value + 1) mod allServer, compareAndSet(value, newValue)
+```java
+public class RoundRobinRule extends AbstractLoadBalancerRule {
+    private int incrementAndGetModulo(int modulo) {
+        for (;;) {
+            int current = nextServerCyclicCounter.get();
+            int next = (current + 1) % modulo;
+            if (nextServerCyclicCounter.compareAndSet(current, next))
+                return next;
+        }
+    }
+}
+```
+- RandomRule
+- RetryRule
+- WeightedResponseTimeRule: weighted short response node
+- BestAvailableRule
+- AvailablityFilteringRule: filter failure node
+- Configuration
+    + package should not under @ComponentScan
+    + otherwise all the ribbon client with shared same policy
+    + Configuration Bean return IRule()
+    + enable @RibbonClient(name = "CLOUD-PAYMENT-SERVICE", configuration = MyRule.class)
+```java
+
+@Configuration
+public class MyRule{
+    @Bean
+    public IRule myRibbonRule() {
+        return new RandomRule();
+    }
+}
+@RibbonClient(name = "CLOUD-PAYMENT-SERVICE", configuration = MyRule.class)
+public class OrderMain80 { }
+```

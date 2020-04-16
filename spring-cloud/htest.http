@@ -52,3 +52,9 @@ GET http://localhost:80/consumer/paymentconsul
 Accept: application/json
 
 ###
+
+
+GET http://localhost:80/consumer/payment/lb
+Accept: application/json
+
+###

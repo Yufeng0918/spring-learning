@@ -1,7 +1,9 @@
 package com.bp.springcloud;
 
+import com.bp.myrule.MyRule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.ribbon.RibbonClient;
 
 /**
  * @Auther: daiyu
@@ -9,6 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Description:
  */
 @SpringBootApplication
+@RibbonClient(name = "CLOUD-PAYMENT-SERVICE", configuration = MyRule.class)
 public class OrderMain80 {
 
     public static void main(String[] args) {
