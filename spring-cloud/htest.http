@@ -70,3 +70,25 @@ GET http://localhost:8001/payment/feign/timeout
 Accept: application/json
 
 ###
+
+
+GET http://localhost:8001/payment/hystrix/ok/6
+Accept: application/json
+
+###
+
+
+GET http://localhost:8001/payment/hystrix/timeout/6
+Accept: application/json
+
+###
+
+GET http://localhost:80/consumer/payment/hystrix/ok/6
+Accept: application/json
+
+###
+
+GET http://localhost:80/consumer/payment/hystrix/timeout/6
+Accept: application/json
+
+###

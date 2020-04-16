@@ -48,4 +48,8 @@ include 'spring-cloud:cloud-consumerconsul-order80'
 findProject(':spring-cloud:cloud-consumerconsul-order80')?.name = 'cloud-consumerconsul-order80'
 include 'spring-cloud:cloud-consumer-feign-order80'
 findProject(':spring-cloud:cloud-consumer-feign-order80')?.name = 'cloud-consumer-feign-order80'
+include 'spring-cloud:cloud-provider-hystrix-payment8001'
+findProject(':spring-cloud:cloud-provider-hystrix-payment8001')?.name = 'cloud-provider-hystrix-payment8001'
+include 'spring-cloud:cloud-consumer-hystrix-order80'
+findProject(':spring-cloud:cloud-consumer-hystrix-order80')?.name = 'cloud-consumer-hystrix-order80'
 

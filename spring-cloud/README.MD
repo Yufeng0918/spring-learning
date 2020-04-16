@@ -398,3 +398,36 @@ public class OrderFeignController {
 }
 ```
 ***
+
+## 8. Hystrix
+- latency and fault tolerance library
+- isolate points of access to remote systems, services and 3rd party libraries
+- stop cascading failure and enable resilience in complex distributed systems where failure is inevitable
+- service
+    + fallback
+        + fallback service if remote service is unavailable
+        + avoid full use of thread 
+    + circuit break
+        + reject request once meet full limit
+    + flow limit
+        + queue the request
+#### Fallbacks Service
+- timeout and runtime exception
+- enable @EnableHystrix in service provider
+    + configure HystrixCommand's fallbackMethod = "paymentInfoTimeoutHandler"
+    + configure HystrixProperty's execution.isolation.thread.timeoutInMillisecond property to set timeout
+```
+@EnableHystrix
+public class PaymentHystrixMain8001 { }
+
+public class PaymentService { 
+    @HystrixCommand(fallbackMethod = "paymentInfoTimeoutHandler", commandProperties = {
+        @HystrixProperty(name="execution.isolation.thread.timeoutInMilliseconds",value="3000")
+    })
+    public String paymentInfoTimeout(Integer id) { }
+
+    public String paymentInfoTimeoutHandler(Integer id) {
+        return "Thread name: " + Thread.currentThread().getName() + " paymentInfoTimeoutHandler, id: "  + id;
+    }
+}
+```
