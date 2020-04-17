@@ -1,6 +1,0 @@
-group 'com.bp'
-version '1.0'
-
-dependencies {
-    annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
-}

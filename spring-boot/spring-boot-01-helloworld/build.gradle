@@ -1,5 +1,0 @@
-group 'com.bp'
-version '1.0'
-
-dependencies {
-}
