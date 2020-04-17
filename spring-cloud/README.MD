@@ -413,9 +413,10 @@ public class OrderFeignController {
         + queue the request
 #### Fallbacks Service
 - timeout and runtime exception
-- enable @EnableHystrix in service provider
+- enable @EnableHystrix, provide fallback in controller layer
     + configure HystrixCommand's fallbackMethod = "paymentInfoTimeoutHandler"
     + configure HystrixProperty's execution.isolation.thread.timeoutInMillisecond property to set timeout
+    + configure Global fallback method via @DefaultProperties
 ```
 @EnableHystrix
 public class PaymentHystrixMain8001 { }
@@ -430,4 +431,29 @@ public class PaymentService {
         return "Thread name: " + Thread.currentThread().getName() + " paymentInfoTimeoutHandler, id: "  + id;
     }
 }
+
+@DefaultProperties(defaultFallback = "paymentGlobalFallbackMethod")
+public class OrderFeignController {
+
+    @GetMapping("/consumer/payment/hystrix/ok/{id}")
+    @HystrixCommand
+    public String paymentInfoOK(@PathVariable("id") Integer id) {
+        String result = paymentHystrixService.paymentInfoOK(id);
+        return result;
+    }
+
+    public String paymentGlobalFallbackMethod() {
+        return "Global Fallback";
+    }
+}
+```
+- enable @FeignClient(fallback), provide fallback in service layer
+    + create fallback class
+    + provide fallback in FeignClient
+```java
+@Component
+public class PaymentFallbackService implements PaymentHystrixService{ }
+
+@FeignClient(value = "CLOUD-PROVIDER-HYSTRIX-PAYMENT", fallback = PaymentFallbackService.class)
+public interface PaymentHystrixService { }
 ```

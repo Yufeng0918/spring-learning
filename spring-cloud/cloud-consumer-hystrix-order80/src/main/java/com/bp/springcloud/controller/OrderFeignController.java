@@ -1,6 +1,7 @@
 package com.bp.springcloud.controller;
 
 import com.bp.springcloud.service.PaymentHystrixService;
+import com.netflix.hystrix.contrib.javanica.annotation.DefaultProperties;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import lombok.extern.slf4j.Slf4j;
@@ -17,6 +18,7 @@ import javax.annotation.Resource;
  */
 @RestController
 @Slf4j
+@DefaultProperties(defaultFallback = "paymentGlobalFallbackMethod")
 public class OrderFeignController {
 
     @Resource
@@ -24,7 +26,9 @@ public class OrderFeignController {
 
 
     @GetMapping("/consumer/payment/hystrix/ok/{id}")
+//    @HystrixCommand
     public String paymentInfoOK(@PathVariable("id") Integer id) {
+//        int a = 1 / 0;
         String result = paymentHystrixService.paymentInfoOK(id);
         return result;
     }
@@ -40,5 +44,9 @@ public class OrderFeignController {
     }
     public String paymentTimeOutFallbackMethod(@PathVariable("id") Integer id) {
         return "payment service overload, please try again later";
+    }
+
+    public String paymentGlobalFallbackMethod() {
+        return "Global Fallback";
     }
 }
