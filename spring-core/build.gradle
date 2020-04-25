@@ -10,7 +10,6 @@ repositories {
 }
 
 
-
 dependencies {
 
     testCompile 'org.springframework:spring-test:4.3.12.RELEASE'

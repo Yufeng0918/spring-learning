@@ -6,7 +6,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class S01_Collection {
 
     public static void main(String[] args) {
-        AbstractApplicationContext factory = new ClassPathXmlApplicationContext("ioc/s03/collection/applicationContext.xml");
+        AbstractApplicationContext factory =
+                new ClassPathXmlApplicationContext("ioc/s03/collection/applicationContext.xml");
         Person p = (Person) factory.getBean("chinese");
         p.test();
     }

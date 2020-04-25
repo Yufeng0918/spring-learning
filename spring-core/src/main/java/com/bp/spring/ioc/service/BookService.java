@@ -1,5 +1,7 @@
 package com.bp.spring.ioc.service;
 
+import com.bp.spring.ioc.dao.BookDao;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -9,4 +11,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class BookService {
+
+    @Autowired
+    private BookDao bookDao;
 }

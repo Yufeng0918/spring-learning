@@ -7,7 +7,8 @@ public class S01_SpringAOP {
 
     public static void main(String[] args) {
 
-        AbstractApplicationContext factory = new ClassPathXmlApplicationContext("aop/s01/proxyfactorybean/applicationContext.xml");
+        AbstractApplicationContext factory =
+                new ClassPathXmlApplicationContext("aop/s01/proxyfactorybean/applicationContext.xml");
         Person person = (Person) factory.getBean("person");
         person.study();
 

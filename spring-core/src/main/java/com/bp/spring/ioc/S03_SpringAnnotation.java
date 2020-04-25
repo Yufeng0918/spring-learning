@@ -1,8 +1,8 @@
 package com.bp.spring.ioc;
 
 import com.bp.spring.ioc.config.ApplicationConfig;
-import com.bp.spring.ioc.entities.Person;
 import com.bp.spring.ioc.config.MyConfig;
+import com.bp.spring.ioc.entities.Person;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.core.env.Environment;

@@ -9,7 +9,8 @@ public class S01_LifeCycle {
 
     public static void main(String[] args) {
 
-        AbstractApplicationContext factory = new ClassPathXmlApplicationContext("ioc/s04/lifecycle/applicationContext.xml");
+        AbstractApplicationContext factory =
+                new ClassPathXmlApplicationContext("ioc/s04/lifecycle/applicationContext.xml");
         Person p = (Person) factory.getBean("chinese");
         p.work();
         SpringBean springBean1 = (SpringBean) factory.getBean("springBean");

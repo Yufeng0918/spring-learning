@@ -21,7 +21,7 @@
 + Object/XML Mapping (OXM) in Spring in Spring
 + Managing Transactions
 + MVC in the Web Tier
-   
+***   
 
 ## 2. Spring Environment
 #### Required
@@ -49,8 +49,7 @@
 + Web
 	+ web:	Web ApplicationContext
 	+ web servlet:  MVC
-	
-	
+***	
 
 ## 3. Spring IOC
 #### Spring Bean Factory VS POJO Factory
@@ -296,8 +295,6 @@ public class ColorFactoryBean implements FactoryBean<Color> {
 ```
 ***
 
-
-
 ## 4. Injection
 #### Constructor
 ```
@@ -308,7 +305,7 @@ public class ColorFactoryBean implements FactoryBean<Color> {
 </bean>
 ```
 #### Properties
-```
+```xml
 <bean id="personService" class="service.impl.PersonServiceBean">
 	<property name="personDao">
 		<bean class="dao.impl.PersonDaoBean"/>
@@ -317,7 +314,46 @@ public class ColorFactoryBean implements FactoryBean<Color> {
 	<property name="id" value="1"/>
 </bean>
 ```
-#### Autowired
+#### @Value
+- direct value: @Value("SG")
+- SpEL: @Value("#{20-2}")
+#### PropetySource
+- load the person.properties to get person.nickName value
+- inject person.nickName value into Person
+- value in property file is inject to Environment's Property
+```java
+@Configuration
+@PropertySource("classpath:/person.properties")
+public class MyConfigOfPropertyValue {
+
+    @Bean
+    public Chinese person() {
+        return new Chinese();
+    }
+}
+
+public class Chinese implements Person {
+    @Value("${person.nickName}")
+    private String nickName;
+}
+
+public class IOCPropertyValue {
+
+    AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext(MyConfigOfPropertyValue.class);
+
+    @Test
+    public void testInject() {
+        ConfigurableEnvironment environment = applicationContext.getEnvironment();
+        String property = environment.getProperty("person.nickName");
+        System.out.println(property);
+        printBeans();
+    }
+}
+```
+#### Dependency Injection
+- Spring use DI to complement denpendencies value injection
+- @Autowired
+
 Class | Layer
 ---|---
 Service | business
@@ -361,12 +397,19 @@ public class PersonServiceBean implements PersonService {
 	<entry key="key-3" value="SMU-K1"/>
 </map>
 ```
-
-
-
+***
 		
-## 6. Bean Life Cycle
+## 5. Bean Lifecycle
 #### Life
++ AnnotationConfigApplicationContext instanced
+    + createBean()
+    + populateBean(): set bean's properties
+    + initializeBean()
+        + applyBeanPostProcessorBeforeInitialization()
+            + loop all BeanPostProcessor to execute postProcessBeforeInitialization
+            + if return null will break loop
+        + invokeInitMethod
+        + applyBeanPostProcessorAfterInitialization(): loop all BeanPostProcessor to execute postProcessAfterInitialization
 + Initial
     + Instantiate
     + Populate properties
@@ -431,6 +474,9 @@ public class Cat implements InitializingBean, DisposableBean {
 ```
 #### @PostConstruct && @PreDestroy
 - JSR250: @PostConstruct & @PreDestroy
+- InitDestroyAnnotationBeanPostProcessor set @PostConstruct as initAnnotationType
+- InitDestroyAnnotationBeanPostProcessor set @PreDestroy as destroyAnnotationType
+- specific way of BeanPostProcessor
 ```java
 @Component
 public class Dog {
@@ -449,6 +495,7 @@ public class Dog {
     + invoke BeanPostProcessor's postProcessBeforeInitialization method
     + init(), @PostConstruct, afterPropertiesSet()
     + invoke BeanPostProcessor's postProcessAfterInitialization method
+- @Autowired, @PostConstruct, @PreDestory is implemented by BeanPostProcessor
 ```java
 @Component
 public class MyBeanPostProcessor implements BeanPostProcessor {
@@ -466,10 +513,6 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
     }
 }
 ```
-		
-
-				
-
 ***
 
 

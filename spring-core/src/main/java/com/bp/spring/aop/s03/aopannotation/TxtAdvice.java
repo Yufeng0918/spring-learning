@@ -1,8 +1,11 @@
 package com.bp.spring.aop.s03.aopannotation;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.*;
+import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterThrowing;
+import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 
 /**
  * Created by Yufeng on 1/8/2017.
@@ -18,17 +21,20 @@ public class TxtAdvice {
 
     @Before("save()")
     public void doBefore(JoinPoint jp) {
-        System.out.println("log doBefore method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+        System.out.println(
+                "log doBefore method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
     }
 
     @After("save()")
     public void doAfter(JoinPoint jp) {
-        System.out.println("log doAfter method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+        System.out.println(
+                "log doAfter method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
     }
 
     @AfterThrowing("save()")
     public void doThrowing(JoinPoint jp) {
-        System.out.println("log doThrowing method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+        System.out.println(
+                "log doThrowing method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
     }
 
 

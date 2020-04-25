@@ -9,7 +9,8 @@ import org.aspectj.lang.ProceedingJoinPoint;
 public class TxtAdvice {
 
     public void doAfter(JoinPoint jp) {
-        System.out.println("log doAfter method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+        System.out.println(
+                "log doAfter method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
     }
 
     public Object doAround(ProceedingJoinPoint pjp) throws Throwable {
@@ -22,11 +23,14 @@ public class TxtAdvice {
     }
 
     public void doBefore(JoinPoint jp) {
-        System.out.println("log doBefore method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+        System.out.println(
+                "log doBefore method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
     }
 
     public void doThrowing(JoinPoint jp, Throwable ex) {
-        System.out.println("log doThrowing method " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName() + " throw exception");
+        System.out.println(
+                "log doThrowing method " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName() +
+                " throw exception");
         System.out.println(ex.getMessage());
     }
 }

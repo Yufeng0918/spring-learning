@@ -32,6 +32,5 @@ public class IOCTestImport {
     private void printBeans() {
         String[] beanNames = applicationContext.getBeanDefinitionNames();
         Stream.of(beanNames).forEach(b -> System.out.println("bean name: " + b));
-//        System.out.println("bean name:" + beanName);
     }
 }

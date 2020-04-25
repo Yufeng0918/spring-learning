@@ -5,7 +5,7 @@ buildscript {
     }
 
     dependencies {
-        classpath (
+        classpath(
                 "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
         )
     }
@@ -24,12 +24,12 @@ allprojects {
 
 subprojects {
     apply plugin: 'java'
-    apply plugin:'io.spring.dependency-management'
+    apply plugin: 'io.spring.dependency-management'
 
     sourceCompatibility = 1.8
     targetCompatibility = 1.8
 
-    [compileJava,compileTestJava,javadoc]*.options*.encoding = 'UTF-8'
+    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
     repositories {
         mavenLocal()
         mavenCentral()
@@ -37,10 +37,10 @@ subprojects {
 
     dependencyManagement {
         dependencies {
-            dependency group:'org.springframework', name:'spring-core', version:'4.3.12.RELEASE'
-            dependency group:'org.springframework', name:'spring-context', version:'4.3.12.RELEASE'
-            dependency group:'org.springframework', name:'spring-aspects', version:'4.3.12.RELEASE'
-            dependency group:'org.springframework', name:'spring-web', version:'4.3.12.RELEASE'
+            dependency group: 'org.springframework', name: 'spring-core', version: '4.3.12.RELEASE'
+            dependency group: 'org.springframework', name: 'spring-context', version: '4.3.12.RELEASE'
+            dependency group: 'org.springframework', name: 'spring-aspects', version: '4.3.12.RELEASE'
+            dependency group: 'org.springframework', name: 'spring-web', version: '4.3.12.RELEASE'
         }
     }
 

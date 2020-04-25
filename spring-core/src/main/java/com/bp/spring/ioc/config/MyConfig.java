@@ -1,11 +1,11 @@
 package com.bp.spring.ioc.config;
 
+import com.bp.spring.ioc.ColorFactoryBean;
 import com.bp.spring.ioc.condition.LinuxCondition;
 import com.bp.spring.ioc.condition.MyImportSelector;
 import com.bp.spring.ioc.entities.Chinese;
 import com.bp.spring.ioc.entities.Color;
 import com.bp.spring.ioc.entities.Person;
-import com.bp.spring.ioc.ColorFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
@@ -22,7 +22,7 @@ import static org.springframework.beans.factory.config.BeanDefinition.*;
 
 @Configuration
 @Conditional({ LinuxCondition.class })
-@Import({ Color.class, MyImportSelector.class, MyImportBeanDefinitionRegistrar.class})
+@Import({ Color.class, MyImportSelector.class, MyImportBeanDefinitionRegistrar.class })
 public class MyConfig {
 
     @Scope(SCOPE_PROTOTYPE)

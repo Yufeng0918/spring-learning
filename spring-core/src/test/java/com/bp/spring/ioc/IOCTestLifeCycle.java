@@ -6,8 +6,6 @@ import com.bp.spring.ioc.config.MyConfigOfLifeCycle;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.stream.Stream;
-
 /**
  * @Auther: daiyu
  * @Date: 25/4/20 09:08

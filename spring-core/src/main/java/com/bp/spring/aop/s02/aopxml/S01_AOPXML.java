@@ -10,7 +10,8 @@ public class S01_AOPXML {
 
     public static void main(String[] args) {
 
-        AbstractApplicationContext factory = new ClassPathXmlApplicationContext("aop/s02/aopxml/applicationContext.xml");
+        AbstractApplicationContext factory =
+                new ClassPathXmlApplicationContext("aop/s02/aopxml/applicationContext.xml");
         TxtService txtService = (TxtService) factory.getBean("txtService");
         txtService.save("trx-01");
 

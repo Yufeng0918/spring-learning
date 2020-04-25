@@ -1,7 +1,5 @@
 package com.bp.spring.ioc.entities;
 
-import lombok.NoArgsConstructor;
-
 /**
  * @Auther: daiyu
  * @Date: 25/4/20 14:24
