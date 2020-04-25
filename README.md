@@ -66,8 +66,7 @@
 	+ Dependency Injection container to manage components
 	+ Loading config for BeanDefinition
 + XML Config
-```
-<!-- Spring Config file -->
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Spring name space declaration -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
@@ -75,33 +74,156 @@
 <bean id="chinese" class="com.bp.spring.ioc.s01.bean.Chinese"/>
 <bean id="american" class="com.bp.spring.ioc.s01.bean.American"/>
 </beans>
-
-// Main class
-ApplicationContext factory = new ClassPathXmlApplicationContext("ioc/s01/bean/applicationContext.xml");
-Person p1 = (Person) factory.getBean("chinese");
 ```
-+ Annotation Config
+```java
+public class S02_SpringIOC {
+    ApplicationContext factory = new ClassPathXmlApplicationContext("ioc/s01/bean/applicationContext.xml");
+    Person p1 = (Person) factory.getBean("chinese");
+}
 ```
+#### @Configuration
+- @Bean(value = "..."), value is bean name
+- @ComponentScan("...") to scan package
+    + excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = {Controller.class}) })
+    + includeFilters and useDefaultFilters = false
+    + @FilterType
+        + ANNOTATION: @Controller, @Service
+        + ASSIGNABLE_TYPE: class name
+        + ASPECT_J, REGX: rarely use
+```java
 // Configuration class
-@ComponentScan scan the same package
 @Configuration
-@ComponentScan
+@ComponentScan("com.bp.spring.ioc.s01.bean")
 public class PersonConfig {
 
 	@Bean
 	public Chinese chinese(){
 		return new Chinese();
 	}
-	@Bean
-	public American american(){
+	@Bean("american")
+	public American american01(){
 		return new American();
 	}
 }
 
-// Main Class
-ApplicationContext factory = new AnnotationConfigApplicationContext(com.bp.spring.ioc.s01.bean.ApplicationConfig.class);
-Person p1 = (Person) factory.getBean("chinese");
+public class S02_SpringIOC {
+    ApplicationContext factory = new AnnotationConfigApplicationContext(com.bp.spring.ioc.s01.bean.config.ApplicationConfig.class);
+    Person p1 = (Person) factory.getBean("chinese");
+}
 ```
+#### Customized Filter
+- create class to implement TypeFilter, return true to create bean and ignore if its false
+- import customized filter in @ComponentScan
+```java
+public class MyFilter implements TypeFilter {
+    @Override
+    public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)
+            throws IOException {
+
+        AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
+        ClassMetadata classMetadata = metadataReader.getClassMetadata();
+        Resource resource = metadataReader.getResource();
+        return false;
+    }
+}
+
+@Configuration
+@ComponentScan(value = "com.bp.spring.ioc.s01.bean", includeFilters = {
+        @Filter(type = FilterType.CUSTOM, classes = {MyFilter.class})
+}, useDefaultFilters = false)
+public class ApplicationConfig {}
+```
+#### Bean Scope
++ Singleton
+    + Instance Bean when application startup
+    + SCOPE_SINGLETON, eager-init
+```
+@Bean
+@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+public SingletonBean singletonBean(){
+	return new SingletonBean();
+}
+```
++ Prototype
+    + Instance Bean when application.getBean()
+    + SCOPE_PROTOTYPE, lazy-init
+```
+@Bean
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+public PrototypeBean prototypeBean(){
+	return new PrototypeBean();
+}
+```
++ Request:	
+    + In a web application, one instance of the bean is created for each request
+    + ScopedProxyMode.INTERFACES inject interface into context, interface proxy the concrete bean
+```
+@Bean
+@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
+public RequestBean requestBean(){
+	return new RequestBeanImpl();
+}
+```
+- Session:	
+   + In a web application, one instance of the bean is created for each session
+   + ScopedProxyMode.TARGET_CLASS generate interface and inject into context, interface proxy the concrete bean
+```
+@Bean
+@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
+public SessionBean sessionBean(){
+	return new SessionBean();
+}
+```
+#### Lazy Initialization
+- XML
+```xml
+<bean id="orderServieBean" class="itcast.OrderServiceBean" lazy-init="true"/>
+```
+- Annotation
+```java
+public class ApplicationConfig {
+
+    @Lazy
+    @Bean
+    public American american() {
+        System.out.println("add american");
+        return new American();
+    }
+}
+```
+#### @Conditional 
+- @Conditional contains multiple Condition.class
+- bean only registered if condition fulfill
+- annotated for class or method
+```java
+public class ApplicationConfig {
+
+    @Bean("linus")
+    @Conditional({ LinuxCondition.class})
+    public Chinese chinese2() {
+        return new Chinese("Linus", 50);
+    }
+}
+
+
+public class LinuxCondition implements Condition {
+    @Override
+    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
+
+        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
+        ClassLoader classLoader = context.getClassLoader();
+        Environment environment = context.getEnvironment();
+        BeanDefinitionRegistry registry = context.getRegistry();
+
+        String property = environment.getProperty("os.name");
+        if (property.toLowerCase().contains("mac")) {
+            return true;
+        }
+        return false;
+    }
+}
+```
+
 
 
 ## 4. Injection
@@ -122,6 +244,24 @@ Person p1 = (Person) factory.getBean("chinese");
 	<property name="name" value="NUS"/>
 	<property name="id" value="1"/>
 </bean>
+```
+#### Autowired
+Class | Layer
+---|---
+Service | business
+Controller | controller
+Repository | persistent
+Component | unclassified 
+
+```java
+@Repository("personDao")
+public class PersonDaoBean implements PersonDao {...}
+
+@Service("personService") 
+public class PersonServiceBean implements PersonService {
+	@Autowired
+	private PersonDao personDao;
+}
 ```
 #### Collection
 ```
@@ -151,32 +291,6 @@ Person p1 = (Person) factory.getBean("chinese");
 ```
 
 
-## 5. AutoScan
-#### Class Categories
-Class | Layer
----|---
-Service | business
-Controller | controller
-Repository | persistent
-Component | unclassified 
-
-```
-//Declaration auto scan package in XML
-<context:component-scan base-package="com.bp.*"/>
-
-//Declaration auto scan package in Java
-@ComponentScan(basePackages="com.bp.*")
-
-// Java auto wired the components
-@Repository("personDao")
-public class PersonDaoBean implements PersonDao {...}
-
-@Service("personService") 
-public class PersonServiceBean implements PersonService {
-	@Autowired
-	private PersonDao personDao;
-}
-```
 
 		
 ## 6. Bean Life Cycle
@@ -206,72 +320,16 @@ public SpringBean springBean(){
 	return new SpringBean();
 }
 ```
-#### Singleton VS Prototype
-+ Singleton:	Instance Bean when application startup
-+ Prototype:	Instance Bean when application.getBean()
 
 		
-## 7. Bean Scope
-#### Singleton:	One instance of the bean is created for the entire application.
-```
-@Bean
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-public SingletonBean singletonBean(){
-	return new SingletonBean();
-}
-```
-#### Prototype:	One instance of the bean is created every time the bean is injected
-```
-@Bean
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public PrototypeBean prototypeBean(){
-	return new PrototypeBean();
-}
-```
-
-#### Request:	
-- In a web application, one instance of the bean is created for each request
-- ScopedProxyMode.INTERFACES inject interface into context, interface proxy the concrete bean
-
-```
-@Bean
-@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
-public RequestBean requestBean(){
-	return new RequestBeanImpl();
-}
-```
-
-#### Session:	
-- In a web application, one instance of the bean is created for each session
-- ScopedProxyMode.TARGET_CLASS generate interface and inject into context, interface proxy the concrete bean
-
-```
-@Bean
-@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public SessionBean sessionBean(){
-	return new SessionBean();
-}
-```
 
 				
-## 8. Lazy Initialization
-#### XML
-```
-// specified bean
-<bean id="orderServieBean" class="itcast.OrderServiceBean" lazy-init="true"/>
 
-// all beans
-<beans default-lazy-init="true"></beans>
-```
-#### Annotation
-```
-@Lazy
-```
 ***
 
 
 
-## 9. Aspect of Programming
+## 9. Aspect Of Programming
 #### Overview
 - An aspect’s functionality (advice) is woven into a program’s execution at one or more join points
 #### AOP by JDK|CGLB
