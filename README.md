@@ -358,6 +358,7 @@ public class IOCPropertyValue {
     + @Qualifier indicate the component to inject
     + must inject the value to property, @Autowired(required = false) will not report error if no value to inject
     + @Primary indicate primary choice if multiple components found
+    + annotated in property, constructor, setter, the injected value is from context
 
 Class | Layer
 ---|---

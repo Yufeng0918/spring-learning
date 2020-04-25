@@ -11,7 +11,7 @@ import org.springframework.context.annotation.Configuration;
  * @Description:
  */
 @Configuration
-@ComponentScan({"com.bp.spring.ioc.service", "com.bp.spring.ioc.controller", "com.bp.spring.ioc.dao"})
+@ComponentScan({"com.bp.spring.ioc.service", "com.bp.spring.ioc.controller", "com.bp.spring.ioc.dao", "com.bp.spring.ioc.entities"})
 public class MyConfigAutowired {
 
     @Bean("bookDao2")

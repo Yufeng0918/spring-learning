@@ -1,5 +1,6 @@
 package com.bp.spring.ioc.dao;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -8,5 +9,6 @@ import org.springframework.stereotype.Repository;
  * @Description:
  */
 @Repository
+@Primary
 public class BookDao {
 }
