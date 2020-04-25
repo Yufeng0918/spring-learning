@@ -13,7 +13,7 @@ import java.util.stream.Stream;
  * @Date: 25/4/20 09:08
  * @Description:
  */
-public class IOCPropertyValue {
+public class IOCPropertyValueTest {
 
     AnnotationConfigApplicationContext applicationContext =
             new AnnotationConfigApplicationContext(MyConfigOfPropertyValue.class);

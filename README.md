@@ -353,7 +353,7 @@ public class IOCPropertyValue {
 #### Dependency Injection
 - Spring use DI to complement denpendencies value injection
 - @Autowired
-
+    + find the component based on type
 Class | Layer
 ---|---
 Service | business
@@ -363,7 +363,7 @@ Component | unclassified
 
 ```java
 @Repository("personDao")
-public class PersonDaoBean implements PersonDao {...}
+public class PersonDaoBean implements PersonDao {}
 
 @Service("personService") 
 public class PersonServiceBean implements PersonService {

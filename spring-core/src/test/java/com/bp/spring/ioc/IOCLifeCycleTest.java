@@ -11,7 +11,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
  * @Date: 25/4/20 09:08
  * @Description:
  */
-public class IOCTestLifeCycle {
+public class IOCLifeCycleTest {
 
     AnnotationConfigApplicationContext applicationContext =
             new AnnotationConfigApplicationContext(ApplicationConfig.class, MyConfig.class, MyConfigOfLifeCycle.class);
