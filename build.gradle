@@ -50,6 +50,7 @@ subprojects {
         compile 'org.springframework:spring-context'
         compile 'org.springframework:spring-aspects'
         compile 'org.springframework:spring-web'
+        compile group: 'javax.inject', name: 'javax.inject', version: '1'
         compileOnly 'org.projectlombok:lombok:1.18.12'
         annotationProcessor 'org.projectlombok:lombok:1.18.12'
         testCompile 'org.springframework:spring-test'

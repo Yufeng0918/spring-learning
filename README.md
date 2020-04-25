@@ -376,10 +376,16 @@ public class PersonServiceBean implements PersonService {
 	private PersonDao personDao;
 }
 ```
-- @Resource, @Inject
+- @Resource
     + @Resource from JSR250
-    + @Inject from JSR330
     + @Autowired from Spring
+    + No support for @Primary and @Autowired(required = false)
+- @Inject
+    + @Inject from JSR330
+    + support @Primary but no support @Autowired(required = false)
+```groovy
+compile group: 'javax.inject', name: 'javax.inject', version: '1'
+```
 #### Collection
 ```
 <list>
