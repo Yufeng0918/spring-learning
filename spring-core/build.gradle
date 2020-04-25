@@ -5,12 +5,9 @@ plugins {
 group 'com.bp'
 version '1.0'
 
-repositories {
-    mavenCentral()
-}
-
 
 dependencies {
-
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
+    compile group: 'com.mchange', name: 'c3p0', version: '0.9.5'
     testCompile 'org.springframework:spring-test:4.3.12.RELEASE'
 }

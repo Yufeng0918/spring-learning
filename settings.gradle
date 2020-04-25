@@ -1,4 +1,4 @@
 rootProject.name = 'spring-learning'
 include 'spring-core'
-
+include 'spring-aop'
 

@@ -417,6 +417,57 @@ compile group: 'javax.inject', name: 'javax.inject', version: '1'
 	<entry key="key-3" value="SMU-K1"/>
 </map>
 ```
+#### Profile
+- switch envrionment setting
+- how to switch
+    - JVM parameter: Dspring.profile.active=test
+    - source code: to set active profile, register configuration and refresh
+    - if bean is not indicate profile, it will be loaded for all env
+```java
+@Configuration
+@PropertySource("classpath:/dbconfig.properties")
+public class MyConfigOfProfile implements EmbeddedValueResolverAware {
+
+
+    @Profile("test")
+    @Bean("testDataSource")
+    public DataSource dataSourceTest(@Value("${db.password}")String pwd) throws Exception{
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        dataSource.setUser(user);
+        dataSource.setPassword(pwd);
+        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/mysql");
+        dataSource.setDriverClass(driverClass);
+        return dataSource;
+    }
+
+
+    @Profile("dev")
+    @Bean("devDataSource")
+    public DataSource dataSourceDev(@Value("${db.password}")String pwd) throws Exception{
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        dataSource.setUser(user);
+        dataSource.setPassword(pwd);
+        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/nacos");
+        dataSource.setDriverClass(driverClass);
+        return dataSource;
+    }
+}
+
+
+public class IOCProfileTest {
+
+    AnnotationConfigApplicationContext applicationContext = new AnnotationConfigApplicationContext();
+
+    @Test
+    public void testProfile() {
+        applicationContext.getEnvironment().setActiveProfiles("test");
+        applicationContext.register(MyConfigOfProfile.class);
+        applicationContext.refresh();
+    }
+}
+```
+
+
 ***
 		
 ## 5. Bean Lifecycle
