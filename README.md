@@ -351,9 +351,14 @@ public class IOCPropertyValue {
 }
 ```
 #### Dependency Injection
-- Spring use DI to complement denpendencies value injection
+- Spring use DI to complement dependencies value injection
 - @Autowired
-    + find the component based on type
+    + find the component based on class type
+    + if multiple components exists, inject the property based on property name
+    + @Qualifier indicate the component to inject
+    + must inject the value to property, @Autowired(required = false) will not report error if no value to inject
+    + @Primary indicate primary choice if multiple components found
+
 Class | Layer
 ---|---
 Service | business
@@ -371,6 +376,10 @@ public class PersonServiceBean implements PersonService {
 	private PersonDao personDao;
 }
 ```
+- @Resource, @Inject
+    + @Resource from JSR250
+    + @Inject from JSR330
+    + @Autowired from Spring
 #### Collection
 ```
 <list>
