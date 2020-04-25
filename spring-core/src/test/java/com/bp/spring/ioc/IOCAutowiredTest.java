@@ -6,6 +6,7 @@ import com.bp.spring.ioc.dao.BookDao;
 import com.bp.spring.ioc.entities.Boss;
 import com.bp.spring.ioc.entities.Car;
 import com.bp.spring.ioc.entities.Chinese;
+import com.bp.spring.ioc.entities.Red;
 import com.bp.spring.ioc.service.BookService;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -34,6 +35,9 @@ public class IOCAutowiredTest {
         Boss boss = applicationContext.getBean(Boss.class);
         Car car = applicationContext.getBean(Car.class);
         System.out.println(boss.getCar() == car);
+
+        Red red = applicationContext.getBean(Red.class);
+        System.out.println(red.getApplicationContext());
     }
 
 }

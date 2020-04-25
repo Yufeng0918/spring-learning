@@ -387,6 +387,10 @@ public class PersonServiceBean implements PersonService {
 ```groovy
 compile group: 'javax.inject', name: 'javax.inject', version: '1'
 ```
+- Aware component
+    + get the spring underlying component
+    + auto inject to object property
+    + Aware component is handle by AwareProcessor
 #### Collection
 ```
 <list>
