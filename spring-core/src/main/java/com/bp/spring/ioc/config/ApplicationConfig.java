@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Lazy;
  */
 
 @Configuration
-@ComponentScan(value = "com.bp.spring.ioc.s01.bean", includeFilters = {
+@ComponentScan(value = "com.bp.spring.ioc", includeFilters = {
 //        @Filter(type = FilterType.ANNOTATION, classes = { Controller.class}),
 //        @Filter(type = FilterType.ASSIGNABLE_TYPE, classes = { BookService.class}),
         @Filter(type = FilterType.CUSTOM, classes = {MyFilter.class})

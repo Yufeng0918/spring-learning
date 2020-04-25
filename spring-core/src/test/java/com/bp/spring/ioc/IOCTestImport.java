@@ -12,7 +12,7 @@ import java.util.stream.Stream;
  * @Date: 25/4/20 09:08
  * @Description:
  */
-public class IOCTest {
+public class IOCTestImport {
 
     AnnotationConfigApplicationContext applicationContext =
             new AnnotationConfigApplicationContext(ApplicationConfig.class,

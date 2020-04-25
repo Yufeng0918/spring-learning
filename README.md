@@ -294,6 +294,9 @@ public class ColorFactoryBean implements FactoryBean<Color> {
     }
 }
 ```
+***
+
+
 
 ## 4. Injection
 #### Constructor
@@ -389,7 +392,80 @@ public SpringBean springBean(){
 	return new SpringBean();
 }
 ```
+#### Init & Destory
+- declare in @Bean
+- Singleton
+    - init method invoke after instanced and properties injected
+    - destory method invoke when context close
+- Prototype
+    - only invoke init method
+```java
+@Configuration
+public class MyConfigOfLifeCycle {
 
+    @Bean(initMethod = "init", destroyMethod = "destory")
+    public Car car() {
+        return new Car();
+    }
+}
+
+```
+#### InitializingBean & DisposableBean
+- implements InitializingBean and override afterPropertiesSet()
+- implements DisposableBean and override destory()
+```java
+@Component
+public class Cat implements InitializingBean, DisposableBean {
+
+    @Override
+    public void destroy() throws Exception {
+        System.out.println("cat destory");
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        System.out.println("cat after properties set");
+    }
+}
+
+```
+#### @PostConstruct && @PreDestroy
+- JSR250: @PostConstruct & @PreDestroy
+```java
+@Component
+public class Dog {
+
+    @PostConstruct
+    public void init() { System.out.println("dog init"); }
+
+    @PreDestroy
+    public void destory(){ System.out.println("dog destory"); }
+}
+```
+#### BeanPostProcessor
+- implements BeanPostProcessor 
+- sequence
+    + constructor
+    + invoke BeanPostProcessor's postProcessBeforeInitialization method
+    + init(), @PostConstruct, afterPropertiesSet()
+    + invoke BeanPostProcessor's postProcessAfterInitialization method
+```java
+@Component
+public class MyBeanPostProcessor implements BeanPostProcessor {
+
+    @Override
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("postProcessBeforeInitialization .. " + beanName + ": " + bean);
+        return bean;
+    }
+
+    @Override
+    public Object postProcessAfterInitialization(Object bean, String beanName) throws BeansException {
+        System.out.println("postProcessAfterInitialization .. " + beanName + ": " + bean);
+        return bean;
+    }
+}
+```
 		
 
 				
