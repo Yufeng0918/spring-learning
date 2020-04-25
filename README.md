@@ -71,8 +71,8 @@
 <!-- Spring name space declaration -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 <!-- Spring bean definition -->
-<bean id="chinese" class="com.bp.spring.ioc.s01.bean.entities.Chinese"/>
-<bean id="american" class="com.bp.spring.ioc.s01.bean.entities.American"/>
+<bean id="chinese" class="Chinese"/>
+<bean id="american" class="American"/>
 </beans>
 ```
 ```java
@@ -107,7 +107,7 @@ public class PersonConfig {
 }
 
 public class S02_SpringIOC {
-    ApplicationContext factory = new AnnotationConfigApplicationContext(com.bp.spring.ioc.s01.bean.config.ApplicationConfig.class);
+    ApplicationContext factory = new AnnotationConfigApplicationContext(ApplicationConfig.class);
     Person p1 = (Person) factory.getBean("chinese");
 }
 ```
@@ -237,7 +237,7 @@ public class MyConfig {
 public class MyImportSelector implements ImportSelector {
     @Override
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        return new String[]{"com.bp.spring.ioc.s01.bean.entities.Blue", "com.bp.spring.ioc.s01.bean.entities.Yellow"};
+        return new String[]{"Blue", "Yellow"};
     }
 }
 
@@ -380,7 +380,7 @@ public class PersonServiceBean implements PersonService {
 
 ```
 //init && destory method declared in XML
-<bean id="chinese" class="com.bp.spring.ioc.s04.lifecycle.Chinese" init-method="init" destroy-method="close">
+<bean id="chinese" class="Chinese" init-method="init" destroy-method="close">
 
 
 //init && destory method declared in Java
