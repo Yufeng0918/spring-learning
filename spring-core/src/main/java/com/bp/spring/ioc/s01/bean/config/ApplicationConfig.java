@@ -1,11 +1,9 @@
 package com.bp.spring.ioc.s01.bean.config;
 
-import com.bp.spring.ioc.s01.bean.American;
-import com.bp.spring.ioc.s01.bean.Chinese;
+import com.bp.spring.ioc.s01.bean.entities.American;
+import com.bp.spring.ioc.s01.bean.entities.Chinese;
 import com.bp.spring.ioc.s01.bean.condition.LinuxCondition;
 import com.bp.spring.ioc.s01.bean.condition.WindowsCondition;
-import com.bp.spring.ioc.s01.bean.dao.BookDao;
-import com.bp.spring.ioc.s01.bean.service.BookService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.ComponentScan.Filter;
@@ -13,8 +11,6 @@ import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 
 /**
  * Created by day68c on 2/3/2017.

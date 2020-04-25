@@ -1,5 +1,8 @@
-package com.bp.spring.ioc.s01.bean;
+package com.bp.spring.ioc.s01.bean.service;
 
+import com.bp.spring.ioc.s01.bean.dao.PersonDao;
+import com.bp.spring.ioc.s01.bean.entities.Person;
+import com.bp.spring.ioc.s01.bean.service.PersonService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

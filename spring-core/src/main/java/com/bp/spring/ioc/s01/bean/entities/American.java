@@ -1,4 +1,4 @@
-package com.bp.spring.ioc.s01.bean;
+package com.bp.spring.ioc.s01.bean.entities;
 
 public class American implements Person {
 

@@ -2,9 +2,9 @@ package com.bp.spring.ioc.s01.bean;
 
 import com.bp.spring.ioc.s01.bean.config.ApplicationConfig;
 import com.bp.spring.ioc.s01.bean.config.MyConfig;
+import com.bp.spring.ioc.s01.bean.entities.Person;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.Environment;
 
 import java.util.stream.Stream;

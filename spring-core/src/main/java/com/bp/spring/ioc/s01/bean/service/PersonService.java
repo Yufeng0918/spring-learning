@@ -1,4 +1,6 @@
-package com.bp.spring.ioc.s01.bean;
+package com.bp.spring.ioc.s01.bean.service;
+
+import com.bp.spring.ioc.s01.bean.entities.Person;
 
 /**
  * Created by day68c on 2/3/2017.

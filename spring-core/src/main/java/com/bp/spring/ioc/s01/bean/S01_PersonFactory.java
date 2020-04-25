@@ -1,5 +1,7 @@
 package com.bp.spring.ioc.s01.bean;
 
+import com.bp.spring.ioc.s01.bean.entities.Person;
+
 public class S01_PersonFactory {
 
     public static void main(String[] args) {

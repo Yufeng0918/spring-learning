@@ -1,7 +1,7 @@
 package com.bp.spring.ioc.s01.bean;
 
+import com.bp.spring.ioc.s01.bean.entities.Person;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 

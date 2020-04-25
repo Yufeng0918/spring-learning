@@ -71,8 +71,8 @@
 <!-- Spring name space declaration -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 <!-- Spring bean definition -->
-<bean id="chinese" class="com.bp.spring.ioc.s01.bean.Chinese"/>
-<bean id="american" class="com.bp.spring.ioc.s01.bean.American"/>
+<bean id="chinese" class="com.bp.spring.ioc.s01.bean.entities.Chinese"/>
+<bean id="american" class="com.bp.spring.ioc.s01.bean.entities.American"/>
 </beans>
 ```
 ```java
@@ -223,8 +223,77 @@ public class LinuxCondition implements Condition {
     }
 }
 ```
+#### @Import
+- @ComponentScan：scan owe component,  @Controller, @Service, @Repository, @Component
+- @Bean: 3rd party component
+- @Import: import component to context
+```java
+@Import(Color.class)
+public class MyConfig {
+}
+```
+- @ImportSelector: return the import component full path name
+```java
+public class MyImportSelector implements ImportSelector {
+    @Override
+    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
+        return new String[]{"com.bp.spring.ioc.s01.bean.entities.Blue", "com.bp.spring.ioc.s01.bean.entities.Yellow"};
+    }
+}
 
+@Import({Color.class, MyImportSelector.class })
+public class MyConfig { }
+```
+- @ImportBeanDefinitionRegistrar: register bean via registerBeanDefinition method
+```java
+public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
+    @Override
+    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
 
+            RootBeanDefinition rainBowBean = new RootBeanDefinition(RainBow.class);
+            registry.registerBeanDefinition("rainBow", rainBowBean);
+    }
+}
+
+@Configuration
+@Import({Color.class, MyImportSelector.class, MyImportBeanDefinitionRegistrar.class})
+public class MyConfig { }
+```
+#### FactoryBean
+- create factoryBean to implements FactoryBean<Color>
+- getBean("factoryName") to return object created by factory
+- getBean("&factoryName") to return factory self
+
+```java
+public class IOCTest {
+
+    @Test
+    public void testImport() {
+
+        Object object = applicationContext.getBean("colorFactoryBean");
+        Object factoryBean = applicationContext.getBean("&colorFactoryBean");
+        System.out.println("bean name: " + object.getClass());
+        System.out.println("factory bean: " + factoryBean.getClass());
+    }
+}
+
+public class ColorFactoryBean implements FactoryBean<Color> {
+    @Override
+    public Color getObject() throws Exception {
+        return new Color();
+    }
+
+    @Override
+    public Class<?> getObjectType() {
+        return Color.class;
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return false;
+    }
+}
+```
 
 ## 4. Injection
 #### Constructor

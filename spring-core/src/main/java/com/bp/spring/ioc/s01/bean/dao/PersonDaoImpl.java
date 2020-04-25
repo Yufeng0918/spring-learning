@@ -1,5 +1,8 @@
-package com.bp.spring.ioc.s01.bean;
+package com.bp.spring.ioc.s01.bean.dao;
 
+import com.bp.spring.ioc.s01.bean.dao.PersonDao;
+import com.bp.spring.ioc.s01.bean.entities.Chinese;
+import com.bp.spring.ioc.s01.bean.entities.Person;
 import org.springframework.stereotype.Repository;
 
 /**
