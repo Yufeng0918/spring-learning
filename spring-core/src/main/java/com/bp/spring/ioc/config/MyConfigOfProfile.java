@@ -34,7 +34,7 @@ public class MyConfigOfProfile implements EmbeddedValueResolverAware {
 
     @Profile("test")
     @Bean("testDataSource")
-    public DataSource dataSourceTest(@Value("${db.password}")String pwd) throws Exception{
+    public DataSource dataSourceTest(@Value("${db.password}") String pwd) throws Exception {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         dataSource.setUser(user);
         dataSource.setPassword(pwd);
@@ -46,7 +46,7 @@ public class MyConfigOfProfile implements EmbeddedValueResolverAware {
 
     @Profile("dev")
     @Bean("devDataSource")
-    public DataSource dataSourceDev(@Value("${db.password}")String pwd) throws Exception{
+    public DataSource dataSourceDev(@Value("${db.password}") String pwd) throws Exception {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         dataSource.setUser(user);
         dataSource.setPassword(pwd);

@@ -1,7 +1,5 @@
 package com.bp.spring.ioc;
 
-import com.bp.spring.ioc.config.ApplicationConfig;
-import com.bp.spring.ioc.config.MyConfig;
 import com.bp.spring.ioc.config.MyConfigOfProfile;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;

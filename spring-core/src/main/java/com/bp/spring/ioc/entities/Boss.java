@@ -2,7 +2,6 @@ package com.bp.spring.ioc.entities;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -26,7 +25,7 @@ public class Boss {
         this.car = car;
     }
 
-//    @Autowired
+    //    @Autowired
     public void setCar(Car car) {
         this.car = car;
     }

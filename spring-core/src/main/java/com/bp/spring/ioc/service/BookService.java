@@ -2,7 +2,6 @@ package com.bp.spring.ioc.service;
 
 import com.bp.spring.ioc.dao.BookDao;
 import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

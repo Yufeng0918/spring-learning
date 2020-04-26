@@ -16,7 +16,8 @@ public class TxtAdvice {
 
 
     @Pointcut("execution(* com.bp.spring.aop.annotation.TxtService.save(*))")
-    public void save() { }
+    public void save() {
+    }
 
     @Before("save()")
     public void doBefore(JoinPoint jp) {

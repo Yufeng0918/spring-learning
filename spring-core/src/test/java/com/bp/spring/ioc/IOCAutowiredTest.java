@@ -1,18 +1,13 @@
 package com.bp.spring.ioc;
 
 import com.bp.spring.ioc.config.MyConfigAutowired;
-import com.bp.spring.ioc.config.MyConfigOfPropertyValue;
 import com.bp.spring.ioc.dao.BookDao;
 import com.bp.spring.ioc.entities.Boss;
 import com.bp.spring.ioc.entities.Car;
-import com.bp.spring.ioc.entities.Chinese;
 import com.bp.spring.ioc.entities.Red;
 import com.bp.spring.ioc.service.BookService;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
-import org.springframework.core.env.ConfigurableEnvironment;
-
-import java.util.stream.Stream;
 
 /**
  * @Auther: daiyu
