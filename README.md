@@ -696,7 +696,7 @@ all the class under package | "execution(* service..*.*(..))"
         + call initBeanFactory
    + AnnotationAwareAspectJAutoProxyCreator
         + initBeanFactory
-- Steps
+- Creation Sequence
     + create AnnotationConfigApplicationContext
     + refresh() to call registerBeanPostProcessors()
         + get list context's BeanPostProcessor definition
@@ -743,7 +743,37 @@ all the class under package | "execution(* service..*.*(..))"
                 + save into ProxyFactory
                 + ProxyFactory create JDKDynamicAopProxy or ObjenesisCglibAopProxy(bean is implments interface)
             + return Proxy Object to context
+- Execution Sequence
+    + context contains proxy, proxy bean contains advisor and target class
+    + CglibAopProxy intercept()
+        + if no interceptor chain, direct method.invoke()
+        + if has interceptor chain, chain execution till target object
+            + get target class interceptor chain via this.advised.getInterceptorsAndDynamicInterceptionAdvice(method, targetClass);
+            + create methodInvocation new CglibMethodInvocation(proxy, target, method, args, targetClass, chain, methodProxy)
+                + create list to store interceptor chain, e.g. List<Object> interceptorList = new ArrayList<>(advisors.length);
+                + loop all InstantiationModelAwarePointcutAdvisor and wrap to MethodInterceptor
+            + CglibMethodInvocation.proceed()
+                + if no interceptor, execute method.invoke(target, methodname)
+                + start index as = -1
+                    + increase index and then get interceptor in sequence
+                    + execute Interceptor.invoke(this), this = CglibMethodInvocation
+                    + set the MethodInvocation to threadLocal
+                    + execute CglibMethodInvocation.proceed() will loop same method again
+        + Chain Sequence
+            + AspectJAfterThrowingAdvice
+                + CglibMethodInvocation.proceed()
+                + invokeAdviceMethod() in catch block if there is exception 
+            + AspectReturningAdviceInterceptor
+                + CglibMethodInvocation.proceed()
+                + advice.afterReturning() if there is no exception
+            + AspectJAfterAdvice
+                + CglibMethodInvocation.proceed()
+                + invokeAdviceMethod() in finally block, no catch block
+            + MethodBeforeAdviceInterceptor
+                + execute beforeAdvice
+                + CglibMethodInvocation.proceed()
+            
 - Notes:
-    + BeanPostProcessor：procesor handle the bean after bean has been instance
+    + BeanPostProcessor：proccesor handle the bean after bean has been instance
     + InstantiationAwareBeanPostProcessor: processor handle the bean before bean creation
     + AnnotationAwareAspectJAutoProxyCreator intercept before all bean creation
