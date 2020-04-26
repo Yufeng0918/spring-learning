@@ -824,3 +824,34 @@ public class UserService {
     }
 }
 ```
+- implementation
+    + @EnableTransactionManagement import TransactionManagementConfigurationSelector
+    + TransactionManagementConfigurationSelector import AutoProxyRegistrar and ProxyTransactionManagementConfiguration
+        + AutoProxyRegistrar: register InfrastructureAdvisorAutoProxyCreator bean definition
+            + InfrastructureAdvisorAutoProxyCreator wraped the target class to Proxy bean
+        + ProxyTransactionManagementConfiguration: 
+            + register transactionAdvisor
+            + transactionAdvisor get the annotation metadata based on AnnotationTransactionAttributeSource
+            + transactionAdvisor wrapped transactionInterceptor, transactionInterceptor is MethodInterceptor
+            + transactionInterceptor
+                + get transaction properties
+                + get transaction manager, if qualifer is not declared, will get transaction manager based on class type
+
+```java
+public abstract class TransactionAspectSupport implements BeanFactoryAware, InitializingBean {
+    @Nullable
+	protected Object invokeWithinTransaction(Method method, @Nullable Class<?> targetClass, final InvocationCallback invocation) throws Throwable {
+
+        TransactionInfo txInfo = createTransactionIfNecessary(ptm, txAttr, joinpointIdentification);
+        Object retVal;
+        try {
+            retVal = invocation.proceedWithInvocation();
+        } catch (Throwable ex) {
+            completeTransactionAfterThrowing(txInfo, ex);
+            throw ex;
+        } finally {
+            cleanupTransactionInfo(txInfo);
+        }
+    }
+}
+```
