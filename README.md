@@ -616,6 +616,16 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
 		<aop:aspectj-autoproxy/> 
 		<!--Declare the AOP Bean-->
 		<bean id="myInterceptor" class="aop.MyInterceptor"/>
+        <aop:config>
+            <aop:aspect id="asp" ref="aspectbean">
+                <aop:pointcut id="mycut" expression="execution(* service.impl.PersonServiceBean.*(..))"/>
+                <aop:before pointcut-ref="mycut"  method="doAccessCheck"/>
+                <aop:after-returning pointcut-ref="mycut" method="doAfterReturn"/>
+                <aop:after pointcut-ref="mycut" method="doAfter"/>
+                <aop:after-throwing pointcut-ref="mycut" method="doAfterThrowing"/>
+                <aop:around pointcut-ref="mycut" method="doProfiling"/>
+            </aop:aspect>
+        </aop:config>
 </beans>
 ```
 ```java
@@ -666,17 +676,3 @@ return type is String | "execution(java.lang.String service.impl.PersonServiceBe
 first argument is String | "execution(java.lang.String service.impl.PersonServiceBean.*(java.lang.String..))"
 return type is not void | "execution(!void service.impl.PersonServiceBean.*(..))"
 all the class under package | "execution(* service..*.*(..))"
-
-#### Spring AOP XML
-```xml
-<aop:config>
-	<aop:aspect id="asp" ref="aspectbean">
-		<aop:pointcut id="mycut" expression="execution(* service.impl.PersonServiceBean.*(..))"/>
-		<aop:before pointcut-ref="mycut"  method="doAccessCheck"/>
-		<aop:after-returning pointcut-ref="mycut" method="doAfterReturn"/>
-		<aop:after pointcut-ref="mycut" method="doAfter"/>
-		<aop:after-throwing pointcut-ref="mycut" method="doAfterThrowing"/>
-		<aop:around pointcut-ref="mycut" method="doProfiling"/>
-	</aop:aspect>
-</aop:config>
-```
