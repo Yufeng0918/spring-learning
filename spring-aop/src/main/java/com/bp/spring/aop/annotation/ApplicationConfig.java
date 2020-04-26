@@ -1,4 +1,4 @@
-package com.bp.spring.aop.aopannotation;
+package com.bp.spring.aop.annotation;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -10,7 +10,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
  */
 
 @Configuration
-@ComponentScan()
+@ComponentScan
 @EnableAspectJAutoProxy
 public class ApplicationConfig {
 
