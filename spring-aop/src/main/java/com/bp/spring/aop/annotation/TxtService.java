@@ -5,5 +5,5 @@ package com.bp.spring.aop.annotation;
  */
 public interface TxtService {
 
-    void save(String trxId);
+    boolean save(String trxId);
 }

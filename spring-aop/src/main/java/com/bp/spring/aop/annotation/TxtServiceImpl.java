@@ -9,7 +9,8 @@ import org.springframework.stereotype.Component;
 public class TxtServiceImpl implements TxtService {
 
     @Override
-    public void save(String trxId) {
+    public boolean save(String trxId) {
         System.out.println("save txt " + trxId);
+        return true;
     }
 }

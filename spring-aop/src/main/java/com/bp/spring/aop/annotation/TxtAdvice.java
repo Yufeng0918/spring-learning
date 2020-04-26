@@ -2,10 +2,13 @@ package com.bp.spring.aop.annotation;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
+import org.aspectj.lang.annotation.AfterReturning;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
+
+import java.util.Arrays;
 
 /**
  * Created by Yufeng on 1/8/2017.
@@ -19,10 +22,12 @@ public class TxtAdvice {
     public void save() {
     }
 
-    @Before("save()")
+    @Before(value = "save()", argNames = "jp")
     public void doBefore(JoinPoint jp) {
+        Object[] args = jp.getArgs();
         System.out.println(
-                "log doBefore method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+                "log doBefore method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName() + ", " +
+                Arrays.asList(args));
     }
 
     @After("save()")
@@ -35,6 +40,11 @@ public class TxtAdvice {
     public void doThrowing(JoinPoint jp) {
         System.out.println(
                 "log doThrowing method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName());
+    }
+
+    @AfterReturning(value = "save()", returning = "result")
+    public void doAfterReturning(Object result) {
+        System.out.println("log after returning: " + result);
     }
 
 
