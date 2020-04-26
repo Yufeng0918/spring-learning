@@ -676,3 +676,57 @@ return type is String | "execution(java.lang.String service.impl.PersonServiceBe
 first argument is String | "execution(java.lang.String service.impl.PersonServiceBean.*(java.lang.String..))"
 return type is not void | "execution(!void service.impl.PersonServiceBean.*(..))"
 all the class under package | "execution(* service..*.*(..))"
+
+#### AOP Implementation
+- @EnableAspectJAutoProxy
+    + @Import(AspectJAutoProxyRegistrar.class)
+        + AspectJAutoProxyRegistrar register bean
+        + register AnnotationAwareAspectJAutoProxyCreator as internalAutoProxyCreator bean
+    + AnnotationAwareAspectJAutoProxyCreator
+        + AspectJAwareAdvisorAutoProxyCreator
+            + AbstractAdvisorAutoProxyCreator
+                + AbstractAutoProxyCreator
+                    + implements SmartInstantiationAwareBeanPostProcessor, BeanFactoryAware
+   + AbstractAutoProxyCreator
+        + setBeanFactory
+        + postProcessBeforeInstantiation
+        + postProcessAfterInstantiation
+   + AbstractAdvisorAutoProxyCreator
+        + override setBeanFactory 
+        + call initBeanFactory
+   + AnnotationAwareAspectJAutoProxyCreator
+        + initBeanFactory
+- Steps
+    + create AnnotationConfigApplicationContext
+    + refresh() to call registerBeanPostProcessors()
+        + get list context's BeanPostProcessor definition
+        + contains internalAutoProxyCreator which is AnnotationAwareAspectJAutoProxyCreator
+        + register BeanPostProcessor which implements PriorityOrdered
+        + register BeanPostProcessor which implements Ordered
+            + try to get internalAutoProxyCreator but it's null first time
+            + create singleton instance of AnnotationAwareAspectJAutoProxyCreator for internalAutoProxyCreator
+            + populatebBean() perform depenedency injection
+            + initializeBean()
+                + invokeAwareMethods() to execute setBeanFactory for BeanFactoryAware
+                    + AnnotationAwareAspectJAutoProxyCreator execute initBeanFactory
+                        + ReflectiveAspectJAdvisorFactory
+                        + AspectJAdvisorBuilder
+                + applyBeanPostProcessorBeforeInitialization()
+                + invokeInitMethods()
+                + applyBeanPostProcessorAfterInitialization
+        + register regular BeanPostProcessor
+    + add BeanPostProcessor to BeanFactory
+    + AnnotationConfigApplicationContext
+        + finishBeanFactoryInitialization
+            + loop all the create and get bean via getBean(), doGetBean(), getSinglteon() 
+            + createBean()
+                + check if bean exist from cache, get bean directly if exist
+                + if bean does not exist, create bean and put into cache
+                    + resolveBeforeInstantiation: expect beanPostProcessor to return proxy
+                        + applyBeanPostProcessBeforeInstantiation
+                            if BeanPostProcessor is InstantiationAwareBeanPostProcessor, execute postProcessBeforeInstantiation()
+                        + applyBeanPostProcessAfterInstantiation
+                    + if no proxy, execute doCreate()
+- Notes:
+    + BeanPostProcessor：procesor handle the bean after bean has been instance
+    + InstantiationAwareBeanPostProcessor: processor handle the bean before bean creation
