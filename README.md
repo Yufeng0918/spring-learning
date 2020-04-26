@@ -586,15 +586,12 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
 ```
 ***
 
-
-
-## 9. Aspect Of Programming
+## 6. AOP
 #### Overview
 - An aspect’s functionality (advice) is woven into a program’s execution at one or more join points
 #### AOP by JDK|CGLB
 - Instance targetObject and return Proxy
 - Get targetObject and invoke
-
 #### Spring AOP Annotation
 - Advice
     - describing the job that an aspect will perform
@@ -604,8 +601,10 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
 	- A join point is a point in the execution of the application where an aspect can be plugged in
 - Pointcuts
 	- Expression for join points
-
-```
+- Annotation	
+    - indicate @EnableAspectJAutoProxy in Configuration
+    - indicate @Aspect in aspect bean
+```xml
 <beans xmlns="http://www.springframework.org/schema/beans"
 	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	   xmlns:context="http://www.springframework.org/schema/context" 
@@ -618,8 +617,17 @@ public class MyBeanPostProcessor implements BeanPostProcessor {
 		<!--Declare the AOP Bean-->
 		<bean id="myInterceptor" class="aop.MyInterceptor"/>
 </beans>
+```
+```java
 
+@EnableAspectJAutoProxy
+public class ApplicationConfig {
 
+    @Bean
+    public TxtAdvice txtAdvice() {
+        return new TxtAdvice();
+    }
+}
 @Aspect
 public class MyInterceptor {
 	
@@ -633,16 +641,16 @@ public class MyInterceptor {
 	public void doAccessCheck() { System.out.println("before info");}
 	
 	@Before("anyMethod() && args(userName)") 
-	public void doAccessCheck(String userName) {...}
+	public void doAccessCheck(String userName) {}
 
 	@AfterReturning(pointcut = "anyMethod()", returning="result")
-	public void doAfterReturn(String result) {...}
+	public void doAfterReturn(String result) {}
 
 	@After("anyMethod()")
-	public void doAfter() {...}
+	public void doAfter() {}
 
 	@AfterThrowing(pointcut="anyMethod()", throwing="e")	
-	public void doAfterThrowing(Exception e){...}
+	public void doAfterThrowing(Exception e){}
 
 	@Around("anyMethod()")	
 	public Object doProfiling(ProceedingJoinPoint pjp) throws Throwable {
@@ -660,7 +668,7 @@ return type is not void | "execution(!void service.impl.PersonServiceBean.*(..))
 all the class under package | "execution(* service..*.*(..))"
 
 #### Spring AOP XML
-```
+```xml
 <aop:config>
 	<aop:aspect id="asp" ref="aspectbean">
 		<aop:pointcut id="mycut" expression="execution(* service.impl.PersonServiceBean.*(..))"/>

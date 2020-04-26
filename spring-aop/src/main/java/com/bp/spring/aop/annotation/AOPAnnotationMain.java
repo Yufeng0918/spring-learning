@@ -6,7 +6,7 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 /**
  * Created by Yufeng on 1/8/2017.
  */
-public class S01_AOPAnn {
+public class AOPAnnotationMain {
 
     public static void main(String[] args) {
 
