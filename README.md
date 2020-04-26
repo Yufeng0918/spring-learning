@@ -727,6 +727,23 @@ all the class under package | "execution(* service..*.*(..))"
                             if BeanPostProcessor is InstantiationAwareBeanPostProcessor, execute postProcessBeforeInstantiation()
                         + applyBeanPostProcessAfterInstantiation
                     + if no proxy, execute doCreate()
+    + AnnotationAwareAspectJAutoProxyCreator
+        + execute postProcessBeforeInstantiation()
+            + verify if bean in advisedBean
+            + verify is bean belong to Advice, Pointcut, @Aspect
+            + verify is skip
+                + get all the aspect's advice method, advice method is InstantiationModelAwarePointcutAdvisor
+                + should skip always return false, means never skip
+        + execute postProcessAfterInstantiation()
+            + AbstractAutoProxyCreator execute wrapIfNecessary()
+            + get all the InstantiationModelAwarePointcutAdvisor for current bean
+            + filter all applicable advisor and sort the advisor and wrapped into Object[]
+            + create proxy via createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean))
+                + get all advisor
+                + save into ProxyFactory
+                + ProxyFactory create JDKDynamicAopProxy or ObjenesisCglibAopProxy(bean is implments interface)
+            + return Proxy Object to context
 - Notes:
     + BeanPostProcessor：procesor handle the bean after bean has been instance
     + InstantiationAwareBeanPostProcessor: processor handle the bean before bean creation
+    + AnnotationAwareAspectJAutoProxyCreator intercept before all bean creation
