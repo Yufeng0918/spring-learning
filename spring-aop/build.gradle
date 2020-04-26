@@ -7,6 +7,10 @@ version '1.0'
 
 
 dependencies {
+    compile 'mysql:mysql-connector-java:5.1.44'
+    compile 'c3p0:c3p0:0.9.1.2'
     compile 'org.springframework:spring-aspects'
+    compile 'org.springframework:spring-jdbc'
+    compile 'org.springframework:spring-orm'
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }

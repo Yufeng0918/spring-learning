@@ -777,3 +777,50 @@ all the class under package | "execution(* service..*.*(..))"
     + BeanPostProcessor：proccesor handle the bean after bean has been instance
     + InstantiationAwareBeanPostProcessor: processor handle the bean before bean creation
     + AnnotationAwareAspectJAutoProxyCreator intercept before all bean creation
+
+#### Transaction
+- Transaction configuration
+    + @EnableTransactionManagement in configuration
+    + configure dataSource bean
+    + configure transactionManager(datasource)
+- add @Transactional in service layer
+```java
+@Configuration
+@ComponentScan("com.bp.spring.aop.tx")
+@EnableTransactionManagement
+public class TxConfig {
+
+    @Bean
+    public PlatformTransactionManager transactionManager() throws Exception{
+        return new DataSourceTransactionManager(dataSource());
+    }
+
+    @Bean
+    public DataSource dataSource() throws Exception{
+        ComboPooledDataSource dataSource = new ComboPooledDataSource();
+        dataSource.setUser("root");
+        dataSource.setPassword("password");
+        dataSource.setDriverClass("com.mysql.jdbc.Driver");
+        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/test");
+        return dataSource;
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate() throws Exception{
+        JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource());
+        return jdbcTemplate;
+    }
+}
+
+@Service
+public class UserService {
+
+    @Autowired
+    private UserDao userDao;
+
+    @Transactional
+    public void insertUser(){
+        userDao.insert();
+    }
+}
+```

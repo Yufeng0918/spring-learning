@@ -2,6 +2,8 @@ package com.bp.spring;
 
 import com.bp.spring.aop.annotation.ApplicationConfig;
 import com.bp.spring.aop.annotation.TxtService;
+import com.bp.spring.aop.tx.TxConfig;
+import com.bp.spring.aop.tx.service.UserService;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
@@ -19,5 +21,13 @@ public class IOCTestAOP {
         ApplicationContext factory = new AnnotationConfigApplicationContext(ApplicationConfig.class);
         TxtService txtService = (TxtService) factory.getBean("txtService");
         txtService.save("trx-01");
+    }
+
+    @Test
+    public void testTx() {
+
+        ApplicationContext factory = new AnnotationConfigApplicationContext(TxConfig.class);
+        UserService userService = factory.getBean(UserService.class);
+        userService.insertUser();
     }
 }

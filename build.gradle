@@ -41,6 +41,8 @@ subprojects {
             dependency group: 'org.springframework', name: 'spring-context', version: '5.2.5.RELEASE'
             dependency group: 'org.springframework', name: 'spring-aspects', version: '5.2.5.RELEASE'
             dependency group: 'org.springframework', name: 'spring-web', version: '5.2.5.RELEASE'
+            dependency group: 'org.springframework', name: 'spring-jdbc', version: '5.2.5.RELEASE'
+            dependency group: 'org.springframework', name: 'spring-orm', version: '5.2.5.RELEASE'
         }
     }
 
