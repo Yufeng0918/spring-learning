@@ -16,7 +16,7 @@ public class IOCImportTest {
 
     AnnotationConfigApplicationContext applicationContext =
             new AnnotationConfigApplicationContext(ApplicationConfig.class,
-                                                   MyConfig.class);
+                    MyConfig.class);
 
     @Test
     public void testImport() {

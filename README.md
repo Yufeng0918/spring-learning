@@ -1,6 +1,6 @@
 # Spring Framework Notes
 
-## 1. Spring Framework
+## 1. Spring框架简介
 #### Framework for lightweight framework for building Java applications
 + Lightweight
 	* Build any application
@@ -21,19 +21,9 @@
 + Object/XML Mapping (OXM) in Spring in Spring
 + Managing Transactions
 + MVC in the Web Tier
-***   
+***
 
-## 2. Spring Environment
-#### Required
-+ Core:
-    + dist\spring.jar
-    + lib\jakarta-commons\commons-logging.jar
-+ AOP:
-    + lib/aspectj/aspectjweaver.jar
-    + aspectjrt.jar
-    + lib/cglib/cglib-nodep-2.1_3.jar
-+ Annotation:
-    + lib\j2ee\common-annotations.jar
+## 2. 环境搭建
 #### Modules
 + Core
 	+ context: ApplicationContext
@@ -49,258 +39,17 @@
 + Web
 	+ web:	Web ApplicationContext
 	+ web servlet:  MVC
-***	
-
-## 3. Spring IOC
-#### Spring Bean Factory VS POJO Factory
-+ POJO Factory:	`Person p1 = PersonFactory.getPerson("Chinese");`
-+ Spring Factory: `Person p1 = (Person) factory.getBean("chinese");`
-#### Dependency [Lookup VS Injection]
-+ Pull:	Dependent Object <Lookup> Container
-+ Push:	Dependent Object <Inject> Container
-+ Spring Process
-	+ Dependency Lookup to access the initial set of components
-	+ Dependency Injection by Auto wired
-+ BeanFactory
-	+ Dependency Injection container to manage components
-	+ Loading config for BeanDefinition
-+ XML Config
-```xml
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Spring name space declaration -->
-<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
-<!-- Spring bean definition -->
-<bean id="chinese" class="Chinese"/>
-<bean id="american" class="American"/>
-</beans>
-```
-```java
-public class S02_SpringIOC {
-    ApplicationContext factory = new ClassPathXmlApplicationContext("ioc/s01/bean/applicationContext.xml");
-    Person p1 = (Person) factory.getBean("chinese");
-}
-```
-#### @Configuration
-- @Bean(value = "..."), value is bean name
-- @ComponentScan("...") to scan package
-    + excludeFilters = {@Filter(type = FilterType.ANNOTATION, classes = {Controller.class}) })
-    + includeFilters and useDefaultFilters = false
-    + @FilterType
-        + ANNOTATION: @Controller, @Service
-        + ASSIGNABLE_TYPE: class name
-        + ASPECT_J, REGX: rarely use
-```java
-// Configuration class
-@Configuration
-@ComponentScan("com.bp.spring.ioc.s01.bean")
-public class PersonConfig {
-
-	@Bean
-	public Chinese chinese(){
-		return new Chinese();
-	}
-	@Bean("american")
-	public American american01(){
-		return new American();
-	}
-}
-
-public class S02_SpringIOC {
-    ApplicationContext factory = new AnnotationConfigApplicationContext(ApplicationConfig.class);
-    Person p1 = (Person) factory.getBean("chinese");
-}
-```
-#### Customized Filter
-- create class to implement TypeFilter, return true to create bean and ignore if its false
-- import customized filter in @ComponentScan
-```java
-public class MyFilter implements TypeFilter {
-    @Override
-    public boolean match(MetadataReader metadataReader, MetadataReaderFactory metadataReaderFactory)
-            throws IOException {
-
-        AnnotationMetadata annotationMetadata = metadataReader.getAnnotationMetadata();
-        ClassMetadata classMetadata = metadataReader.getClassMetadata();
-        Resource resource = metadataReader.getResource();
-        return false;
-    }
-}
-
-@Configuration
-@ComponentScan(value = "com.bp.spring.ioc.s01.bean", includeFilters = {
-        @Filter(type = FilterType.CUSTOM, classes = {MyFilter.class})
-}, useDefaultFilters = false)
-public class ApplicationConfig {}
-```
-#### Bean Scope
-+ Singleton
-    + Instance Bean when application startup
-    + SCOPE_SINGLETON, eager-init
-```
-@Bean
-@Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
-public SingletonBean singletonBean(){
-	return new SingletonBean();
-}
-```
-+ Prototype
-    + Instance Bean when application.getBean()
-    + SCOPE_PROTOTYPE, lazy-init
-```
-@Bean
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-public PrototypeBean prototypeBean(){
-	return new PrototypeBean();
-}
-```
-+ Request:	
-    + In a web application, one instance of the bean is created for each request
-    + ScopedProxyMode.INTERFACES inject interface into context, interface proxy the concrete bean
-```
-@Bean
-@Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.INTERFACES)
-public RequestBean requestBean(){
-	return new RequestBeanImpl();
-}
-```
-- Session:	
-   + In a web application, one instance of the bean is created for each session
-   + ScopedProxyMode.TARGET_CLASS generate interface and inject into context, interface proxy the concrete bean
-```
-@Bean
-@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public SessionBean sessionBean(){
-	return new SessionBean();
-}
-```
-#### Lazy Initialization
-- XML
-```xml
-<bean id="orderServieBean" class="itcast.OrderServiceBean" lazy-init="true"/>
-```
-- Annotation
-```java
-public class ApplicationConfig {
-
-    @Lazy
-    @Bean
-    public American american() {
-        System.out.println("add american");
-        return new American();
-    }
-}
-```
-#### @Conditional 
-- @Conditional contains multiple Condition.class
-- bean only registered if condition fulfill
-- annotated for class or method
-```java
-public class ApplicationConfig {
-
-    @Bean("linus")
-    @Conditional({ LinuxCondition.class})
-    public Chinese chinese2() {
-        return new Chinese("Linus", 50);
-    }
-}
-
-
-public class LinuxCondition implements Condition {
-    @Override
-    public boolean matches(ConditionContext context, AnnotatedTypeMetadata metadata) {
-
-        ConfigurableListableBeanFactory beanFactory = context.getBeanFactory();
-        ClassLoader classLoader = context.getClassLoader();
-        Environment environment = context.getEnvironment();
-        BeanDefinitionRegistry registry = context.getRegistry();
-
-        String property = environment.getProperty("os.name");
-        if (property.toLowerCase().contains("mac")) {
-            return true;
-        }
-        return false;
-    }
-}
-```
-#### @Import
-- @ComponentScan：scan owe component,  @Controller, @Service, @Repository, @Component
-- @Bean: 3rd party component
-- @Import: import component to context
-```java
-@Import(Color.class)
-public class MyConfig {
-}
-```
-- @ImportSelector: return the import component full path name
-```java
-public class MyImportSelector implements ImportSelector {
-    @Override
-    public String[] selectImports(AnnotationMetadata importingClassMetadata) {
-        return new String[]{"Blue", "Yellow"};
-    }
-}
-
-@Import({Color.class, MyImportSelector.class })
-public class MyConfig { }
-```
-- @ImportBeanDefinitionRegistrar: register bean via registerBeanDefinition method
-```java
-public class MyImportBeanDefinitionRegistrar implements ImportBeanDefinitionRegistrar {
-    @Override
-    public void registerBeanDefinitions(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-
-            RootBeanDefinition rainBowBean = new RootBeanDefinition(RainBow.class);
-            registry.registerBeanDefinition("rainBow", rainBowBean);
-    }
-}
-
-@Configuration
-@Import({Color.class, MyImportSelector.class, MyImportBeanDefinitionRegistrar.class})
-public class MyConfig { }
-```
-#### FactoryBean
-- create factoryBean to implements FactoryBean<Color>
-- getBean("factoryName") to return object created by factory
-- getBean("&factoryName") to return factory self
-
-```java
-public class IOCTest {
-
-    @Test
-    public void testImport() {
-
-        Object object = applicationContext.getBean("colorFactoryBean");
-        Object factoryBean = applicationContext.getBean("&colorFactoryBean");
-        System.out.println("bean name: " + object.getClass());
-        System.out.println("factory bean: " + factoryBean.getClass());
-    }
-}
-
-public class ColorFactoryBean implements FactoryBean<Color> {
-    @Override
-    public Color getObject() throws Exception {
-        return new Color();
-    }
-
-    @Override
-    public Class<?> getObjectType() {
-        return Color.class;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-}
-```
 ***
+
+## [3. 组件注册](./doc/spring-registry.md)
+
 
 ## 4. Injection
 #### Constructor
 ```
-<bean id="personDao" class="dao.impl.PersonDaoBean"/>
+<bean id="personDao" class="com.bp.spring.registry.dao.impl.PersonDaoBean"/>
 <bean id="personService" class="service.impl.PersonServiceBean">
-	<constructor-arg index="0" type="dao.PersonDao" ref="personDao"/>
+	<constructor-arg index="0" type="com.bp.spring.registry.dao.PersonDao" ref="personDao"/>
 	<constructor-arg index="1" value="NUS"/>
 </bean>
 ```
@@ -308,7 +57,7 @@ public class ColorFactoryBean implements FactoryBean<Color> {
 ```xml
 <bean id="personService" class="service.impl.PersonServiceBean">
 	<property name="personDao">
-		<bean class="dao.impl.PersonDaoBean"/>
+		<bean class="com.bp.spring.registry.dao.impl.PersonDaoBean"/>
 	</property>
 	<property name="name" value="NUS"/>
 	<property name="id" value="1"/>
@@ -467,9 +216,8 @@ public class IOCProfileTest {
 }
 ```
 
-
 ***
-		
+
 ## 5. Bean Lifecycle
 #### Life
 + AnnotationConfigApplicationContext instanced
@@ -772,7 +520,7 @@ all the class under package | "execution(* service..*.*(..))"
             + MethodBeforeAdviceInterceptor
                 + execute beforeAdvice
                 + CglibMethodInvocation.proceed()
-            
+    
 - Notes:
     + BeanPostProcessor：proccesor handle the bean after bean has been instance
     + InstantiationAwareBeanPostProcessor: processor handle the bean before bean creation

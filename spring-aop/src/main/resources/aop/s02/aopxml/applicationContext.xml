@@ -5,17 +5,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd">
 
 
-  <aop:config>
-    <aop:aspect id="txtAspect" ref="txtAspectBean">
-      <aop:pointcut id="businessService"
-                    expression="execution(* TxtServiceImpl.*(..))"/>
-      <aop:before pointcut-ref="businessService" method="doBefore"/>
-      <aop:after pointcut-ref="businessService" method="doAfter"/>
-      <aop:around pointcut-ref="businessService" method="doAround"/>
-      <aop:after-throwing pointcut-ref="businessService" method="doThrowing" throwing="ex"/>
-    </aop:aspect>
-  </aop:config>
+    <aop:config>
+        <aop:aspect id="txtAspect" ref="txtAspectBean">
+            <aop:pointcut id="businessService"
+                          expression="execution(* TxtServiceImpl.*(..))"/>
+            <aop:before pointcut-ref="businessService" method="doBefore"/>
+            <aop:after pointcut-ref="businessService" method="doAfter"/>
+            <aop:around pointcut-ref="businessService" method="doAround"/>
+            <aop:after-throwing pointcut-ref="businessService" method="doThrowing" throwing="ex"/>
+        </aop:aspect>
+    </aop:config>
 
-  <bean id="txtAspectBean" class="TxtAdvice"/>
-  <bean id="txtService" class="TxtServiceImpl"/>
+    <bean id="txtAspectBean" class="TxtAdvice"/>
+    <bean id="txtService" class="TxtServiceImpl"/>
 </beans>

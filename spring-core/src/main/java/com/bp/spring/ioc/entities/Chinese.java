@@ -1,11 +1,9 @@
 package com.bp.spring.ioc.entities;
 
-import lombok.AllArgsConstructor;
-import lombok.ToString;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 
-@AllArgsConstructor
-@ToString
+@Data
 public class Chinese implements Person {
 
     @Value("SG")
@@ -20,6 +18,13 @@ public class Chinese implements Person {
     public Chinese() {
         System.out.println("chinese constructor");
     }
+
+    public Chinese(String name, int age, String nickName) {
+        this.name = name;
+        this.age = age;
+        this.nickName = nickName;
+    }
+
 
     @Override
     public String sayGoodbye(String name) {

@@ -1,7 +1,6 @@
 package com.bp.spring.aop.tx;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -23,12 +22,12 @@ import javax.sql.DataSource;
 public class TxConfig {
 
     @Bean
-    public PlatformTransactionManager transactionManager() throws Exception{
+    public PlatformTransactionManager transactionManager() throws Exception {
         return new DataSourceTransactionManager(dataSource());
     }
 
     @Bean
-    public DataSource dataSource() throws Exception{
+    public DataSource dataSource() throws Exception {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         dataSource.setUser("root");
         dataSource.setPassword("password");
@@ -38,7 +37,7 @@ public class TxConfig {
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplate() throws Exception{
+    public JdbcTemplate jdbcTemplate() throws Exception {
         JdbcTemplate jdbcTemplate = new JdbcTemplate(dataSource());
         return jdbcTemplate;
     }

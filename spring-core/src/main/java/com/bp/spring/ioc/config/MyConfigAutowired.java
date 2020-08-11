@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ComponentScan({
-        "com.bp.spring.ioc.service", "com.bp.spring.ioc.controller", "com.bp.spring.ioc.dao",
+        "com.bp.spring.ioc.service", "com.bp.spring.ioc.controller", "com.bp.spring.ioc.com.bp.spring.registry.dao",
         "com.bp.spring.ioc.entities"
 })
 public class MyConfigAutowired {

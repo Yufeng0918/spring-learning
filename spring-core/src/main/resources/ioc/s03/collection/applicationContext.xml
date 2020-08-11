@@ -3,51 +3,51 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-  <bean id="tool" class="com.bp.spring.ioc.collection.ConcreteTool"/>
+    <bean id="tool" class="com.bp.spring.ioc.collection.ConcreteTool"/>
 
-  <bean id="chinese" class="com.bp.spring.ioc.collection.Chinese">
+    <bean id="chinese" class="com.bp.spring.ioc.collection.Chinese">
 
-    <property name="list">
-      <list>
-        <value>value1</value>
-        <value>value2</value>
-        <value>value3</value>
-        <value>value4</value>
-      </list>
-    </property>
+        <property name="list">
+            <list>
+                <value>value1</value>
+                <value>value2</value>
+                <value>value3</value>
+                <value>value4</value>
+            </list>
+        </property>
 
-    <property name="map">
-      <map>
-        <entry key="key1">
-          <value>value1</value>
-        </entry>
-        <entry key="key2">
-          <value>value2</value>
-        </entry>
-        <entry key="key3">
-          <value>value3</value>
-        </entry>
-        <entry key="key4">
-          <value>value4</value>
-        </entry>
-      </map>
-    </property>
+        <property name="map">
+            <map>
+                <entry key="key1">
+                    <value>value1</value>
+                </entry>
+                <entry key="key2">
+                    <value>value2</value>
+                </entry>
+                <entry key="key3">
+                    <value>value3</value>
+                </entry>
+                <entry key="key4">
+                    <value>value4</value>
+                </entry>
+            </map>
+        </property>
 
-    <property name="properties">
-      <props>
-        <prop key="key1">value1</prop>
-        <prop key="key2">value2</prop>
-      </props>
-    </property>
+        <property name="properties">
+            <props>
+                <prop key="key1">value1</prop>
+                <prop key="key2">value2</prop>
+            </props>
+        </property>
 
-    <property name="set">
-      <set>
-        <value>value1</value>
-        <value>value2</value>
-        <value>value3</value>
-        <ref bean="tool"/>
-        <ref bean="tool"/>
-      </set>
-    </property>
-  </bean>
+        <property name="set">
+            <set>
+                <value>value1</value>
+                <value>value2</value>
+                <value>value3</value>
+                <ref bean="tool"/>
+                <ref bean="tool"/>
+            </set>
+        </property>
+    </bean>
 </beans>

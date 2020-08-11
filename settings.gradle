@@ -2,4 +2,5 @@ rootProject.name = 'spring-learning'
 include 'spring-core'
 include 'spring-aop'
 include 'spring-ext'
+include 'spring-registry'
 

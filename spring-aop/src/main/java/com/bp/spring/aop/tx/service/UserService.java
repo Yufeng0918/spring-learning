@@ -18,7 +18,7 @@ public class UserService {
     private UserDao userDao;
 
     @Transactional
-    public void insertUser(){
+    public void insertUser() {
         userDao.insert();
     }
 }

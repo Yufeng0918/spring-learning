@@ -13,7 +13,7 @@ public class MyImportSelector implements ImportSelector {
     public String[] selectImports(AnnotationMetadata importingClassMetadata) {
 
 //        importingClassMetadata.get
-        return new String[] {
+        return new String[]{
                 "com.bp.spring.ioc.entities.Blue", "com.bp.spring.ioc.entities.Yellow", "com.bp.spring.ioc.entities.Red"
         };
     }

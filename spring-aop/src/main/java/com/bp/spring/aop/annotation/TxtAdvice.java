@@ -1,12 +1,7 @@
 package com.bp.spring.aop.annotation;
 
 import org.aspectj.lang.JoinPoint;
-import org.aspectj.lang.annotation.After;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.AfterThrowing;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.annotation.*;
 
 import java.util.Arrays;
 
@@ -27,7 +22,7 @@ public class TxtAdvice {
         Object[] args = jp.getArgs();
         System.out.println(
                 "log doBefore method: " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName() + ", " +
-                Arrays.asList(args));
+                        Arrays.asList(args));
     }
 
     @After("save()")

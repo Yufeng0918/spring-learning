@@ -10,5 +10,6 @@ dependencies {
     compile 'org.springframework:spring-web'
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
     compile group: 'com.mchange', name: 'c3p0', version: '0.9.5'
-    testCompile 'org.springframework:spring-test:4.3.12.RELEASE'
+    compile "junit:junit:4.12"
+    compile 'org.springframework:spring-test'
 }

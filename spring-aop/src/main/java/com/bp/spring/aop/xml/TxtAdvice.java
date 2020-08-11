@@ -30,7 +30,7 @@ public class TxtAdvice {
     public void doThrowing(JoinPoint jp, Throwable ex) {
         System.out.println(
                 "log doThrowing method " + jp.getTarget().getClass().getName() + "." + jp.getSignature().getName() +
-                " throw exception");
+                        " throw exception");
         System.out.println(ex.getMessage());
     }
 }

@@ -3,15 +3,15 @@
        xmlns="http://www.springframework.org/schema/beans"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
 
-  <bean id="tool" class="com.bp.spring.ioc.lifecycle.ConcreteTool"></bean>
+    <bean id="tool" class="com.bp.spring.ioc.lifecycle.ConcreteTool"></bean>
 
-  <bean id="chinese" class="com.bp.spring.ioc.lifecycle.Chinese" init-method="init" destroy-method="close">
-    <property name="tool">
-      <ref bean="tool"/>
-    </property>
-  </bean>
+    <bean id="chinese" class="com.bp.spring.ioc.lifecycle.Chinese" init-method="init" destroy-method="close">
+        <property name="tool">
+            <ref bean="tool"/>
+        </property>
+    </bean>
 
-  <bean id="springBean" class="com.bp.spring.ioc.lifecycle.SpringBean" init-method="customizeInit"
-        destroy-method="customizeDestroy"/>
+    <bean id="springBean" class="com.bp.spring.ioc.lifecycle.SpringBean" init-method="customizeInit"
+          destroy-method="customizeDestroy"/>
 
 </beans>
