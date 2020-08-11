@@ -43,6 +43,7 @@
 
 ## [3. 组件注册](./doc/spring-registry.md)
 
+## [4. 生命周期](./doc/spring-lifecycle.md)
 
 ## 4. Injection
 #### Constructor

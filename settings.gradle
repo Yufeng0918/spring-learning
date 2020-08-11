@@ -3,4 +3,5 @@ include 'spring-core'
 include 'spring-aop'
 include 'spring-ext'
 include 'spring-registry'
+include 'spring-lifecye'
 
