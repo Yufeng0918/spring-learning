@@ -1,0 +1,17 @@
+plugins {
+    id 'java'
+}
+
+group 'com.bp'
+version '1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.springframework:spring-web'
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
+    testCompile "junit:junit:4.12"
+    testCompile 'org.springframework:spring-test'
+}
