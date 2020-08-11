@@ -855,3 +855,13 @@ public abstract class TransactionAspectSupport implements BeanFactoryAware, Init
     }
 }
 ```
+
+## 7. BeanFactoryPostProcessor
+- bean defination is loaded into factory
+- factory has not instance any object yet
+
+**process**
++ ioc container 
++  invokeBeanFactoryPostProcessor()
+    + find all BeanFactoryPostProcessor in BeanFactory
+    + execute BeanFactoryPostProcessor postProcessBeanFactory method
