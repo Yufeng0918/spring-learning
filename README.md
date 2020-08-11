@@ -41,9 +41,23 @@
 	+ web servlet:  MVC
 ***
 
+
+
 ## [3. 组件注册](./doc/spring-registry.md)
 
+
+
 ## [4. 生命周期](./doc/spring-lifecycle.md)
+
+
+
+## [5. 属性赋值](./doc/spring-properties.md)
+
+
+
+## [6. 自动装配](./doc/spring-autoconfig.md)
+
+
 
 ## 4. Injection
 #### Constructor
