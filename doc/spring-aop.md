@@ -105,24 +105,42 @@ all the class under package | "execution(* service..*.*(..))"
 
 ## 2. 源码解析
 
-- @EnableAspectJAutoProxy
-    + @Import(AspectJAutoProxyRegistrar.class)
-        + AspectJAutoProxyRegistrar register bean
-        + register AnnotationAwareAspectJAutoProxyCreator as internalAutoProxyCreator bean
-    + AnnotationAwareAspectJAutoProxyCreator
-        + AspectJAwareAdvisorAutoProxyCreator
-            + AbstractAdvisorAutoProxyCreator
-                + AbstractAutoProxyCreator
-                    + implements SmartInstantiationAwareBeanPostProcessor, BeanFactoryAware
-   + AbstractAutoProxyCreator
-        + setBeanFactory
-        + postProcessBeforeInstantiation
-        + postProcessAfterInstantiation
-   + AbstractAdvisorAutoProxyCreator
-        + override setBeanFactory 
-        + call initBeanFactory
-   + AnnotationAwareAspectJAutoProxyCreator
-        + initBeanFactory
+### 2.1 导入切面组件
+
+**@EnableAspectJAutoProxy**
+
++ @Import(AspectJAutoProxyRegistrar.class)
+
++ AspectJAutoProxyRegistrar 注册了 AnnotationAwareAspectJAutoProxyCreator Bean, 名字是 internalAutoProxyCreator
+
+
+
+### 2.2 类结构
+
+AnnotationAwareAspectJAutoProxyCreator 结构
+
+![](../image/aop-01.png)
+
+
+
+
+
+
+
+
+
+
+
++ AbstractAutoProxyCreator
+     + setBeanFactory
+     + postProcessBeforeInstantiation
+     + postProcessAfterInstantiation
++ AbstractAdvisorAutoProxyCreator
+     + override setBeanFactory 
+     + call initBeanFactory
++ AnnotationAwareAspectJAutoProxyCreator
+     + initBeanFactory
+
 - Creation Sequence
     + create AnnotationConfigApplicationContext
     + refresh() to call registerBeanPostProcessors()
