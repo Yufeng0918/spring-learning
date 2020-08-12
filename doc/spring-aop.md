@@ -80,7 +80,7 @@ all the class under package | "execution(* service..*.*(..))"
 
 ## 2. 源码解析
 
-### 2.1 导入切面组件
+### 2.1 导入切面组件定义
 
 **@EnableAspectJAutoProxy**
 
@@ -90,7 +90,7 @@ all the class under package | "execution(* service..*.*(..))"
 
 
 
-### 2.2 类结构
+### 2.2 AutoProxyCreator类结构
 
 AnnotationAwareAspectJAutoProxyCreator 结构
 
@@ -114,7 +114,7 @@ AnnotationAwareAspectJAutoProxyCreator 结构
 
 
 
-### 2.3 创建过程
+### 2.3 创建AutoProxyCreator
 
 #### 宏观流程
 
@@ -157,7 +157,64 @@ initializeBean：初始化bean；
 
 
 
-### 2.4 调用过程
+### 2.4 调用AutoProxyCreator创建代理对象
+
+**finishBeanFactoryInitialization(beanFactory)完成BeanFactory初始化工作并创建剩下的单实例bean**
+
+遍历获取容器中所有的Bean
+
+依次通过getBean(beanName)创建对象
+
++ 先从缓存中获取当前bean，如果能获取到，说明bean是之前被创建过的，直接使用，否则再创建；
+
++ 只要创建好的Bean都会被缓存起来
+  + **InstantiationAwareBeanPostProcessor是在创建Bean实例之前先尝试用后置处理器返回对象**
+  + resolveBeforeInstantiation(beanName, mbdToUse)去创建一个代理对象
+    + InstantiationAwareBeanPostProcessor调用applyBeanPostProcessorsBeforeInstantiation获取advisor
+    + InstantiationAwareBeanPostProcessor调用applyBeanPostProcessorsAfterInitialization创建代理对象
+
++ doCreateBean(beanName, mbdToUse, args)真正的去创建一个bean实例
+
+```JAVA
+public abstract class AbstractAutowireCapableBeanFactory {
+		protected Object createBean(String beanName, RootBeanDefinition mbd, @Nullable Object[] args)
+			try {
+			// Give BeanPostProcessors a chance to return a proxy instead of the target bean instance.
+                Object bean = resolveBeforeInstantiation(beanName, mbdToUse);
+                if (bean != null) {
+                    return bean;
+                }
+            }
+            catch (Throwable ex) {
+                throw new BeanCreationException(mbdToUse.getResourceDescription(), beanName,
+                        "BeanPostProcessor before instantiation of bean failed", ex);
+            }
+		}
+
+	@Nullable
+	protected Object resolveBeforeInstantiation(String beanName, RootBeanDefinition mbd) {
+		Object bean = null;
+		if (!Boolean.FALSE.equals(mbd.beforeInstantiationResolved)) {
+			// Make sure bean class is actually resolved at this point.
+			if (!mbd.isSynthetic() && hasInstantiationAwareBeanPostProcessors()) {
+				Class<?> targetType = determineTargetType(beanName, mbd);
+				if (targetType != null) {
+					bean = applyBeanPostProcessorsBeforeInstantiation(targetType, beanName);
+					if (bean != null) {
+						bean = applyBeanPostProcessorsAfterInitialization(bean, beanName);
+					}
+				}
+			}
+			mbd.beforeInstantiationResolved = (bean != null);
+		}
+		return bean;
+	}
+}
+```
+
++ 
+
+
 
 
 

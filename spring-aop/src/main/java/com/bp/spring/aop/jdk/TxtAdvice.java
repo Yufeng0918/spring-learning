@@ -1,4 +1,4 @@
-package com.bp.spring.aop.annotation;
+package com.bp.spring.aop.jdk;
 
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -13,7 +13,7 @@ import java.util.Arrays;
 public class TxtAdvice {
 
 
-    @Pointcut("execution(* com.bp.spring.aop.annotation.TxtService.save(*))")
+    @Pointcut("execution(* com.bp.spring.aop.jdk.TxtService.save(*))")
     public void save() {
     }
 

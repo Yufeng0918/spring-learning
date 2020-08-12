@@ -1,4 +1,4 @@
-package com.bp.spring.aop.annotation;
+package com.bp.spring.aop.jdk;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
