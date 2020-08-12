@@ -28,32 +28,7 @@ Get targetObject and invoke
 - indicate **@EnableAspectJAutoProxy** in Configuration
 - indicate **@Aspect** in aspect bean
 
-```xml
-<beans xmlns="http://www.springframework.org/schema/beans"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	   xmlns:context="http://www.springframework.org/schema/context" 
-	   xmlns:aop="http://www.springframework.org/schema/aop"      
-	   xsi:schemaLocation="http://www.springframework.org/schema/beans
-		   http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-		   http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
-		   http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
-		<aop:aspectj-autoproxy/> 
-		<!--Declare the AOP Bean-->
-		<bean id="myInterceptor" class="aop.MyInterceptor"/>
-        <aop:config>
-            <aop:aspect id="asp" ref="aspectbean">
-                <aop:pointcut id="mycut" expression="execution(* service.impl.PersonServiceBean.*(..))"/>
-                <aop:before pointcut-ref="mycut"  method="doAccessCheck"/>
-                <aop:after-returning pointcut-ref="mycut" method="doAfterReturn"/>
-                <aop:after pointcut-ref="mycut" method="doAfter"/>
-                <aop:after-throwing pointcut-ref="mycut" method="doAfterThrowing"/>
-                <aop:around pointcut-ref="mycut" method="doProfiling"/>
-            </aop:aspect>
-        </aop:config>
-</beans>
-```
 ```java
-
 @EnableAspectJAutoProxy
 public class ApplicationConfig {
 
@@ -123,71 +98,100 @@ AnnotationAwareAspectJAutoProxyCreator 结构
 
 
 
+**AnnotationAwareAspectJAutoProxyCreator实现InstantiationAwareBeanPostProcessor接口**
+
++ postProcessBeforeInstantiation: 在bean对象创建之前
++ postProcessAfterInstantiation：在bean对象创建之后
 
 
 
+**AbstractAutoProxyCreator和AbstractAdvisorAutoProxyCreator 实现BeanFactoryAware接口**
+
++ BeanFactoryAware让Bean获取到Spring的BeanFactory工厂
+
++ AbstractAutoProxyCreator.setBeanFactory()
++ AbstractAdvisorAutoProxyCreator.initBeanFactory()
 
 
 
+### 2.3 创建过程
+
+#### 宏观流程
+
+传入配置类，创建ioc容器
+
+注册配置类，调用refresh（）刷新容器；
+
+**registerBeanPostProcessors(beanFactory)注册bean的后置处理器来方便拦截bean的创建**
+
++ 先获取ioc容器已经定义了的需要创建对象的所有BeanPostProcessor
+
++ 优先注册实现了PriorityOrdered接口的BeanPostProcessor；
+
++ **再给容器中注册实现了Ordered接口的BeanPostProcessor；**
+
++ 注册没实现优先级接口的BeanPostProcessor
+
++ 注册BeanPostProcessor，实际上就是创建BeanPostProcessor对象，保存在容器中
+
+把BeanPostProcessor注册到BeanFactory中；
 
 
-+ AbstractAutoProxyCreator
-     + setBeanFactory
-     + postProcessBeforeInstantiation
-     + postProcessAfterInstantiation
-+ AbstractAdvisorAutoProxyCreator
-     + override setBeanFactory 
-     + call initBeanFactory
+
+#### 微观流程 - 注册实现了Ordered接口的BeanPostProcessor
+
+**创建internalAutoProxyCreator的BeanPostProcessor【AnnotationAwareAspectJAutoProxyCreator】**
+
+创建Bean的实例
+
+populateBean；给bean的各种属性赋值
+
+initializeBean：初始化bean；
+
++ invokeAwareMethods()：处理Aware接口的方法回调
++ applyBeanPostProcessorsBeforeInitialization()：应用后置处理器的postProcessBeforeInitialization（）
++ invokeInitMethods()；执行自定义的初始化方法
++ applyBeanPostProcessorsAfterInitialization()；执行后置处理器的postProcessAfterInitialization（）；
+
++ BeanPostProcessor(AnnotationAwareAspectJAutoProxyCreator)创建成功
+
+
+
+### 2.4 调用过程
+
+
+
++ register regular BeanPostProcessor
+
++ add BeanPostProcessor to BeanFactory
++ AnnotationConfigApplicationContext
+    + finishBeanFactoryInitialization
+        + loop all the create and get bean via getBean(), doGetBean(), getSinglteon() 
+        + createBean()
+            + check if bean exist from cache, get bean directly if exist
+            + if bean does not exist, create bean and put into cache
+                + resolveBeforeInstantiation: expect beanPostProcessor to return proxy
+                    + applyBeanPostProcessBeforeInstantiation
+                        if BeanPostProcessor is InstantiationAwareBeanPostProcessor, execute postProcessBeforeInstantiation()
+                    + applyBeanPostProcessAfterInstantiation
+                + if no proxy, execute doCreate()
 + AnnotationAwareAspectJAutoProxyCreator
-     + initBeanFactory
+    + execute postProcessBeforeInstantiation()
+        + verify if bean in advisedBean
+        + verify is bean belong to Advice, Pointcut, @Aspect
+        + verify is skip
+            + get all the aspect's advice method, advice method is InstantiationModelAwarePointcutAdvisor
+            + should skip always return false, means never skip
+    + execute postProcessAfterInstantiation()
+        + AbstractAutoProxyCreator execute wrapIfNecessary()
+        + get all the InstantiationModelAwarePointcutAdvisor for current bean
+        + filter all applicable advisor and sort the advisor and wrapped into Object[]
+        + create proxy via createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean))
+            + get all advisor
+            + save into ProxyFactory
+            + ProxyFactory create JDKDynamicAopProxy or ObjenesisCglibAopProxy(bean is implments interface)
+        + return Proxy Object to context
 
-- Creation Sequence
-    + create AnnotationConfigApplicationContext
-    + refresh() to call registerBeanPostProcessors()
-        + get list context's BeanPostProcessor definition
-        + contains internalAutoProxyCreator which is AnnotationAwareAspectJAutoProxyCreator
-        + register BeanPostProcessor which implements PriorityOrdered
-        + register BeanPostProcessor which implements Ordered
-            + try to get internalAutoProxyCreator but it's null first time
-            + create singleton instance of AnnotationAwareAspectJAutoProxyCreator for internalAutoProxyCreator
-            + populatebBean() perform depenedency injection
-            + initializeBean()
-                + invokeAwareMethods() to execute setBeanFactory for BeanFactoryAware
-                    + AnnotationAwareAspectJAutoProxyCreator execute initBeanFactory
-                        + ReflectiveAspectJAdvisorFactory
-                        + AspectJAdvisorBuilder
-                + applyBeanPostProcessorBeforeInitialization()
-                + invokeInitMethods()
-                + applyBeanPostProcessorAfterInitialization
-        + register regular BeanPostProcessor
-    + add BeanPostProcessor to BeanFactory
-    + AnnotationConfigApplicationContext
-        + finishBeanFactoryInitialization
-            + loop all the create and get bean via getBean(), doGetBean(), getSinglteon() 
-            + createBean()
-                + check if bean exist from cache, get bean directly if exist
-                + if bean does not exist, create bean and put into cache
-                    + resolveBeforeInstantiation: expect beanPostProcessor to return proxy
-                        + applyBeanPostProcessBeforeInstantiation
-                            if BeanPostProcessor is InstantiationAwareBeanPostProcessor, execute postProcessBeforeInstantiation()
-                        + applyBeanPostProcessAfterInstantiation
-                    + if no proxy, execute doCreate()
-    + AnnotationAwareAspectJAutoProxyCreator
-        + execute postProcessBeforeInstantiation()
-            + verify if bean in advisedBean
-            + verify is bean belong to Advice, Pointcut, @Aspect
-            + verify is skip
-                + get all the aspect's advice method, advice method is InstantiationModelAwarePointcutAdvisor
-                + should skip always return false, means never skip
-        + execute postProcessAfterInstantiation()
-            + AbstractAutoProxyCreator execute wrapIfNecessary()
-            + get all the InstantiationModelAwarePointcutAdvisor for current bean
-            + filter all applicable advisor and sort the advisor and wrapped into Object[]
-            + create proxy via createProxy(bean.getClass(), beanName, specificInterceptors, new SingletonTargetSource(bean))
-                + get all advisor
-                + save into ProxyFactory
-                + ProxyFactory create JDKDynamicAopProxy or ObjenesisCglibAopProxy(bean is implments interface)
-            + return Proxy Object to context
 - Execution Sequence
     + context contains proxy, proxy bean contains advisor and target class
     + CglibAopProxy intercept()
