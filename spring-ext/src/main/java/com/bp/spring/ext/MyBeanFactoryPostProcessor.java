@@ -19,4 +19,5 @@ public class MyBeanFactoryPostProcessor implements BeanFactoryPostProcessor {
         System.out.println("total: " + count);
         System.out.println(Arrays.asList(names));
     }
+
 }

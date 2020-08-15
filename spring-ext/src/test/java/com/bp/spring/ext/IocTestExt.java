@@ -12,4 +12,19 @@ public class IocTestExt {
                 new AnnotationConfigApplicationContext(ExtConfig.class);
         applicationContext.close();
     }
+
+    @Test
+    public void testBeanDefinitionRegistryPostProcessor() {
+        AnnotationConfigApplicationContext applicationContext =
+                new AnnotationConfigApplicationContext(ExtConfig.class);
+        applicationContext.close();
+    }
+
+
+    @Test
+    public void testApplicationListener() {
+        AnnotationConfigApplicationContext applicationContext =
+                new AnnotationConfigApplicationContext(ExtConfig.class);
+        applicationContext.close();
+    }
 }
