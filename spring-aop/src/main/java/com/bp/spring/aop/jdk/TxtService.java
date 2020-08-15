@@ -1,4 +1,4 @@
-package com.bp.spring.aop.annotation;
+package com.bp.spring.aop.jdk;
 
 /**
  * Created by Yufeng on 1/8/2017.

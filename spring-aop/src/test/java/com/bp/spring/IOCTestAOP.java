@@ -1,7 +1,7 @@
 package com.bp.spring;
 
-import com.bp.spring.aop.annotation.ApplicationConfig;
-import com.bp.spring.aop.annotation.TxtService;
+import com.bp.spring.aop.jdk.ApplicationConfig;
+import com.bp.spring.aop.jdk.TxtService;
 import com.bp.spring.aop.tx.TxConfig;
 import com.bp.spring.aop.tx.service.UserService;
 import org.junit.Test;
