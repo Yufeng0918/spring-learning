@@ -6,12 +6,10 @@ import org.springframework.context.annotation.AnnotationConfigApplicationContext
 public class IocTestExt {
 
     @Test
-    public void test01() {
+    public void testBeanFactoryPostProcessor() {
 
         AnnotationConfigApplicationContext applicationContext =
                 new AnnotationConfigApplicationContext(ExtConfig.class);
-
-
         applicationContext.close();
     }
 }
