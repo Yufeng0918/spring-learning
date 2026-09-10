@@ -1,6 +1,6 @@
 package com.bp.spring.aop.tx;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -28,11 +28,11 @@ public class TxConfig {
 
     @Bean
     public DataSource dataSource() throws Exception {
-        ComboPooledDataSource dataSource = new ComboPooledDataSource();
-        dataSource.setUser("root");
-        dataSource.setPassword("password");
-        dataSource.setDriverClass("com.mysql.jdbc.Driver");
-        dataSource.setJdbcUrl("jdbc:mysql://localhost:3306/test");
+        org.springframework.jdbc.datasource.DriverManagerDataSource dataSource = new org.springframework.jdbc.datasource.DriverManagerDataSource();
+        dataSource.setDriverClassName("org.h2.Driver");
+        dataSource.setUrl("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;INIT=CREATE TABLE IF NOT EXISTS tbl_user (id INT AUTO_INCREMENT PRIMARY KEY, username VARCHAR(50), age INT);");
+        dataSource.setUsername("sa");
+        dataSource.setPassword("");
         return dataSource;
     }
 

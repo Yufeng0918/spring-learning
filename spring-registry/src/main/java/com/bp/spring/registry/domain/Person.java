@@ -18,6 +18,9 @@ public class Person {
     private String nickName;
 
 
+    public Person() {
+    }
+
     public Person(String name, Integer age) {
         super();
         this.name = name;
