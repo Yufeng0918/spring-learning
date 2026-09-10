@@ -2,7 +2,7 @@ package com.bp.spring.registry;
 
 import com.bp.spring.registry.domain.Color;
 import com.bp.spring.registry.domain.Person;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 

@@ -1,7 +1,7 @@
 package com.bp.spring.property;
 
 import com.bp.spring.property.domain.Person;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 public class PropertyTest {

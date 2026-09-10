@@ -7,7 +7,7 @@ buildscript {
 
     dependencies {
         classpath(
-                "io.spring.gradle:dependency-management-plugin:1.0.7.RELEASE"
+                "io.spring.gradle:dependency-management-plugin:1.1.4"
         )
     }
 }
@@ -27,36 +27,46 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'io.spring.dependency-management'
 
-    sourceCompatibility = 1.8
-    targetCompatibility = 1.8
+    sourceCompatibility = 17
+    targetCompatibility = 17
 
-    [compileJava, compileTestJava, javadoc]*.options*.encoding = 'UTF-8'
+    tasks.withType(JavaCompile) {
+        options.encoding = 'UTF-8'
+    }
+    tasks.withType(Test) {
+        useJUnitPlatform()
+    }
+    
     repositories {
         mavenLocal()
         mavenCentral()
+        maven { url 'https://repo.spring.io/milestone' }
+        maven { url 'https://repo.spring.io/snapshot' }
     }
 
     dependencyManagement {
         dependencies {
-            dependency group: 'org.springframework', name: 'spring-core', version: '5.2.5.RELEASE'
-            dependency group: 'org.springframework', name: 'spring-context', version: '5.2.5.RELEASE'
-            dependency group: 'org.springframework', name: 'spring-aspects', version: '5.2.5.RELEASE'
-            dependency group: 'org.springframework', name: 'spring-web', version: '5.2.5.RELEASE'
-            dependency group: 'org.springframework', name: 'spring-jdbc', version: '5.2.5.RELEASE'
-            dependency group: 'org.springframework', name: 'spring-orm', version: '5.2.5.RELEASE'
-            dependency group: 'org.springframework', name: 'spring-test', version: '5.2.5.RELEASE'
+            dependency group: 'org.springframework', name: 'spring-core', version: '6.2.0-SNAPSHOT' // Using 6.2/7.0 equivalent for now
+            dependency group: 'org.springframework', name: 'spring-context', version: '6.2.0-SNAPSHOT'
+            dependency group: 'org.springframework', name: 'spring-aspects', version: '6.2.0-SNAPSHOT'
+            dependency group: 'org.springframework', name: 'spring-web', version: '6.2.0-SNAPSHOT'
+            dependency group: 'org.springframework', name: 'spring-jdbc', version: '6.2.0-SNAPSHOT'
+            dependency group: 'org.springframework', name: 'spring-orm', version: '6.2.0-SNAPSHOT'
+            dependency group: 'org.springframework', name: 'spring-test', version: '6.2.0-SNAPSHOT'
         }
     }
 
 
     dependencies {
-        compile 'org.springframework:spring-core'
-        compile 'org.springframework:spring-context'
-        compile group: 'javax.inject', name: 'javax.inject', version: '1'
-        compileOnly 'org.projectlombok:lombok:1.18.12'
-        annotationProcessor 'org.projectlombok:lombok:1.18.12'
-        testCompile 'org.springframework:spring-test'
-        testCompile "junit:junit:4.12"
+        implementation 'org.springframework:spring-core'
+        implementation 'org.springframework:spring-context'
+        implementation group: 'jakarta.inject', name: 'jakarta.inject-api', version: '2.0.1'
+        implementation group: 'jakarta.annotation', name: 'jakarta.annotation-api', version: '3.0.0'
+        compileOnly 'org.projectlombok:lombok:1.18.32'
+        annotationProcessor 'org.projectlombok:lombok:1.18.32'
+        testImplementation 'org.springframework:spring-test'
+        testImplementation 'org.junit.jupiter:junit-jupiter-api:5.10.2'
+        testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.10.2'
     }
 }
 

@@ -7,8 +7,8 @@ version '1.0'
 
 
 dependencies {
-    compile 'org.springframework:spring-web'
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
-    testCompile "junit:junit:4.12"
-    testCompile 'org.springframework:spring-test'
+    implementation 'org.springframework:spring-web'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '5.1.45'
+    // testCompile "junit:junit:4.12"
+    testImplementation 'org.springframework:spring-test'
 }

@@ -4,7 +4,7 @@ import com.bp.spring.aop.jdk.ApplicationConfig;
 import com.bp.spring.aop.jdk.TxtService;
 import com.bp.spring.aop.tx.TxConfig;
 import com.bp.spring.aop.tx.service.UserService;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
